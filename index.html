@@ -160,7 +160,7 @@
 
     /* ── Custom select ─────────────────────────── */
     .csel { position: relative; user-select: none; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); font-size: var(--ctrl-fs); color: var(--text); outline: none; cursor: pointer; display: flex; align-items: center; width: 100%; height: var(--ctrl-h); padding: 0 32px; transition: border-color .13s, box-shadow .13s; box-sizing: border-box; }
-    .csel:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,.05); }
+    .csel:focus { outline: none; border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,.05); }
     .csel-val { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .csel-val.empty { color: var(--text3); }
     .csel-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; }
@@ -381,7 +381,7 @@
             </div>
           </div>
           <div style="margin-bottom:12px">
-            <button class="btn btn-secondary btn-sm" onclick="addMatToProduct()">+ Материал</button>
+            <button class="btn btn-secondary" onclick="addMatToProduct()">+ Материал</button>
           </div>
           <div id="prod-mats-list"></div>
           <div class="form-actions">
@@ -410,7 +410,7 @@
     <div class="form-block">
       <div class="section-label" style="margin-bottom:16px">Списание изделий</div>
       <div id="wo-items-list"></div>
-      <button class="btn btn-secondary btn-sm wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
+      <button class="btn btn-secondary wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
       <div id="wo-preview"></div>
       <div class="form-actions" style="margin-top:12px">
         <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
@@ -428,9 +428,9 @@
       <div class="chart-bars" id="chart-bars"></div>
     </div>
     <div class="day-nav">
-      <button class="btn btn-secondary btn-sm" onclick="prevSummaryDay()">&#8249; Назад</button>
+      <button class="btn btn-secondary" onclick="prevSummaryDay()">&#8249; Назад</button>
       <span id="day-nav-label" style="font-size:13px;font-weight:500;min-width:120px;text-align:center"></span>
-      <button class="btn btn-secondary btn-sm" id="day-nav-next" onclick="nextSummaryDay()">Вперёд &#8250;</button>
+      <button class="btn btn-secondary" id="day-nav-next" onclick="nextSummaryDay()">Вперёд &#8250;</button>
     </div>
     <div id="day-table-wrap" style="margin-top:16px"></div>
   </div>
@@ -892,7 +892,7 @@ function startEditProduct(id) {
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
       <select id="edit-mat-sel" class="edit-ctrl" style="flex:1">${matOptions}</select>
       <input type="number" id="edit-mat-qty" class="edit-ctrl" placeholder="м" min="0" step="0.01" style="width:80px">
-      <button class="btn btn-secondary btn-sm" onclick="addEditProdMat()">+</button>
+      <button class="btn btn-secondary" onclick="addEditProdMat()">+</button>
     </div>
   `;
 
