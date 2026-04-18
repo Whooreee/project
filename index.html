@@ -551,8 +551,9 @@ function hideModal() {
   modalCallback = null;
 }
 function confirmModal() {
+  const cb = modalCallback;
   hideModal();
-  if (modalCallback) modalCallback();
+  if (cb) cb();
 }
 
 // ── Auth ─────────────────────────────────────────────────────────────────
@@ -588,13 +589,18 @@ function loadLocal() {
 }
 function saveLocal() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
+function fetchWithTimeout(url, opts = {}, ms = 10000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(t));
+}
+
 async function loadCloud() {
   try {
-    const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`);
+    const res = await fetchWithTimeout(`${CLOUD_DB}/${STORE_KEY}.json`);
     if (!res.ok) return 'error';
     const data = await res.json();
     if (data && typeof data === 'object') {
-      // Only overwrite local state if cloud data is newer (has more recent updatedAt)
       const cloudState = normalizeState(data);
       if (!_dirtyLocal || (cloudState.updatedAt && (!state.updatedAt || cloudState.updatedAt > state.updatedAt))) {
         state = cloudState;
@@ -607,7 +613,7 @@ async function loadCloud() {
 
 async function saveCloud() {
   try {
-    const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`, {
+    const res = await fetchWithTimeout(`${CLOUD_DB}/${STORE_KEY}.json`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state)
     });
     if (res.ok) { _dirtyLocal = false; }
