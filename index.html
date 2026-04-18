@@ -32,6 +32,11 @@
     input, select, button, textarea { font-family: var(--font); }
     ::placeholder { color: var(--text3); opacity: 1; }
 
+    /* Remove number spinners */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
     /* ── Auth ──────────────────────────────────── */
     .auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 200; }
     .auth-screen.hidden { display: none; }
@@ -61,7 +66,7 @@
     #sync-status { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
 
     /* ── Tabs ──────────────────────────────────── */
-    .tabs { display: flex; border-bottom: 1.5px solid var(--border); overflow: hidden; margin-bottom: 0; }
+    .tabs { display: flex; border-bottom: 1.5px solid var(--border); overflow-x: auto; margin-bottom: 0; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab-btn { padding: 9px 20px; font-size: 13px; font-weight: 500; color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap; transition: color 0.13s; }
     .tab-btn:hover { color: var(--text); }
@@ -77,15 +82,13 @@
     .island { position: sticky; top: 24px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; }
     .island-title { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; }
     .island-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 12px 0; }
-    .island-row { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-    .island-row:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+    .island-row { margin-bottom: 14px; }
+    .island-row:last-child { margin-bottom: 0; }
     .island-mat-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
     .island-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 3px; }
-    .island-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+    .island-bar { height: 100%; border-radius: 3px; background: var(--black); transition: width 0.4s ease; }
     .island-meta { font-size: 11px; color: var(--text3); display: flex; justify-content: space-between; }
     .island-stock-val { font-size: 13px; font-weight: 600; color: var(--text); }
-    .island-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-    .island-total { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); }
 
     /* ── Section ───────────────────────────────── */
     .section { margin-bottom: 32px; }
@@ -94,13 +97,13 @@
 
     /* ── Form block ────────────────────────────── */
     .form-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 20px 16px; margin-bottom: 20px; }
-    .form-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .form-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
     .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 88px; }
     .field.narrow { max-width: 120px; }
     .field label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
     .field input, .field select { padding: 8px 11px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); color: var(--text); outline: none; transition: border-color 0.13s, box-shadow 0.13s; }
     .field input:focus, .field select:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
-    .form-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 12px; flex-wrap: wrap; }
+    .form-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
     /* ── Buttons ───────────────────────────────── */
     .btn { font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: var(--r); border: 1px solid transparent; cursor: pointer; transition: all 0.12s; line-height: 1.4; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
@@ -123,10 +126,10 @@
     .mat-list { display: flex; flex-direction: column; gap: 10px; }
     .mat-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; transition: border-color 0.13s; }
     .mat-card:hover { border-color: var(--border-h); }
-    .mat-card-top { display: flex; align-items: center; gap: 12px; padding: 16px 18px; }
+    .mat-card-top { display: flex; align-items: flex-start; gap: 12px; padding: 16px 18px; }
     .mat-card-info { flex: 1; min-width: 0; }
     .mat-card-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-    .mat-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .mat-card-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: -2px; }
     .mat-card-stock { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
     .mat-card-unit { font-size: 12px; color: var(--text3); font-weight: 400; margin-left: 2px; }
     .mat-edit-row { display: flex; align-items: center; gap: 8px; padding: 0 18px 16px; }
@@ -137,7 +140,7 @@
     .prod-list { display: flex; flex-direction: column; gap: 8px; }
     .prod-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; }
     .prod-card:hover { border-color: var(--border-h); }
-    .prod-card-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+    .prod-card-top { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; }
     .prod-card-name { font-size: 14px; font-weight: 500; flex: 1; }
     .prod-card-body { padding: 0 16px 14px; border-top: 1px solid var(--border); padding-top: 10px; }
     .comp-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text2); padding: 3px 0; }
@@ -148,13 +151,26 @@
     .input-wrap { position: relative; display: flex; align-items: center; }
     .input-wrap .ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; line-height: 1; }
     .input-wrap input, .input-wrap select { padding-left: 32px; width: 100%; }
-    select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23B0ABA6' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
+
+    /* ── Custom select ─────────────────────────── */
+    .csel { position: relative; user-select: none; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); font-size: 13px; color: var(--text); outline: none; cursor: pointer; display: flex; align-items: center; width: 100%; min-height: 36px; padding: 8px 32px 8px 32px; transition: border-color .13s, box-shadow .13s; }
+    .csel:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,.05); }
+    .csel-val { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .csel-val.empty { color: var(--text3); }
+    .csel-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; }
+    .csel-arr { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; transition: transform .15s; }
+    .csel.open .csel-arr { transform: translateY(-50%) rotate(180deg); }
+    .csel-drop { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-lg); z-index: 100; max-height: 220px; overflow-y: auto; }
+    .csel-drop.hidden { display: none; }
+    .csel-opt { padding: 9px 14px; font-size: 13px; color: var(--text); cursor: pointer; }
+    .csel-opt:hover { background: var(--bg-hover); }
+    .csel-opt.csel-selected { font-weight: 500; background: var(--bg-soft); }
 
     /* ── Writeoff form ─────────────────────────── */
     .wo-item-row { display: flex; align-items: flex-end; gap: 10px; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); margin-bottom: 8px; flex-wrap: wrap; }
     .wo-item-row .field { min-width: 140px; }
     .wo-item-row .field.narrow { max-width: 100px; }
-    .wo-preview { margin-top: 12px; padding: 14px 16px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); }
+    .wo-preview { margin-top: 12px; padding: 14px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); }
     .wo-preview-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
     .wo-preview-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 3px 0; }
     .wo-preview-mat { font-size: 12px; color: var(--text3); padding: 2px 0 2px 12px; }
@@ -263,42 +279,40 @@
 
         <div class="form-block">
           <div class="section-label" style="margin-bottom:16px">Добавить материал</div>
+          <!-- Row 1: Тип + Диаметр/Высота/Ширина -->
           <div class="form-grid">
             <div class="field narrow">
               <label>Тип</label>
-              <div class="input-wrap">
-                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
-                <select id="mat-type" onchange="updateMatFields()">
-                  <option value="pipe">Труба</option>
-                  <option value="profile">Профиль</option>
-                </select>
-              </div>
+              <div id="mat-type-wrap"></div>
             </div>
             <div class="field" id="f-diam">
               <label>Диаметр (мм)</label>
               <div class="input-wrap">
-                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
                 <input type="number" id="mat-diameter" placeholder="Введите диаметр" min="0">
               </div>
             </div>
             <div class="field" id="f-h" style="display:none">
               <label>Высота (мм)</label>
               <div class="input-wrap">
-                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></span>
                 <input type="number" id="mat-height" placeholder="Введите высоту" min="0">
               </div>
             </div>
             <div class="field" id="f-w" style="display:none">
               <label>Ширина (мм)</label>
               <div class="input-wrap">
-                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
                 <input type="number" id="mat-width" placeholder="Введите ширину" min="0">
               </div>
             </div>
+          </div>
+          <!-- Row 2: Стенка + Остаток -->
+          <div class="form-grid">
             <div class="field narrow">
               <label>Стенка (мм)</label>
               <div class="input-wrap">
-                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span>
                 <input type="number" id="mat-wall" placeholder="Введите толщину" min="0" step="0.1">
               </div>
             </div>
@@ -350,10 +364,7 @@
           <div class="form-grid" id="prod-mat-form-row" style="align-items:flex-end">
             <div class="field">
               <label>Материал</label>
-              <div class="input-wrap">
-                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
-                <select id="prod-mat-select"></select>
-              </div>
+              <div id="prod-mat-select-wrap"></div>
             </div>
             <div class="field narrow">
               <label>Расход (м)</label>
@@ -362,10 +373,9 @@
                 <input type="number" id="prod-mat-qty" placeholder="Введите расход" min="0" step="0.01">
               </div>
             </div>
-            <div class="field" style="flex:0;min-width:auto;justify-content:flex-end">
-              <label style="visibility:hidden">add</label>
-              <button class="btn btn-secondary btn-sm" onclick="addMatToProduct()">+ Материал</button>
-            </div>
+          </div>
+          <div style="margin-bottom:12px">
+            <button class="btn btn-secondary btn-sm" onclick="addMatToProduct()">+ Материал</button>
           </div>
           <div id="prod-mats-list"></div>
           <div class="form-actions">
@@ -396,7 +406,7 @@
       <div id="wo-items-list"></div>
       <button class="btn btn-secondary btn-sm wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
       <div id="wo-preview"></div>
-      <div class="form-actions">
+      <div class="form-actions" style="margin-top:12px">
         <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
         <div id="wo-err" class="err"></div>
         <div id="wo-ok" class="ok-msg"></div>
@@ -428,11 +438,10 @@ const STORE_KEY = 'sklad-v1';
 
 // ── State ────────────────────────────────────────────────────────────────
 let state = { materials: [], products: [], writeoffs: [] };
-let newProdMats  = [];   // materials being added to a new product
-let editProdMats = [];   // materials in the product being edited
-let woItems      = [{ prodId: '', qty: 1 }]; // writeoff items
+let newProdMats  = [];
+let editProdMats = [];
+let woItems      = [{ prodId: '', qty: 1 }];
 let modalCallback = null;
-
 let summaryDay = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
 
 function normalizeState(s) {
@@ -444,6 +453,88 @@ function normalizeState(s) {
   };
 }
 
+// ── Custom Select ─────────────────────────────────────────────────────────
+const _csel = {};
+const ARROW_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+function cselHtml(id, opts, value, placeholder, iconSvg) {
+  _csel[id] = { opts, value: value || '', onChange: null };
+  const found = opts.find(o => o.v === value);
+  const label = found ? found.l : placeholder;
+  const isEmpty = !found;
+  const optsHtml = opts.map(o =>
+    `<div class="csel-opt${o.v === value ? ' csel-selected' : ''}" data-csel-id="${id}" data-csel-val="${esc(o.v)}">${esc(o.l)}</div>`
+  ).join('');
+  return `<div class="csel" id="csel-${id}" tabindex="0" data-csel="${id}">
+    ${iconSvg ? `<span class="csel-ico">${iconSvg}</span>` : ''}
+    <span class="csel-val${isEmpty ? ' empty' : ''}">${esc(label)}</span>
+    <span class="csel-arr">${ARROW_SVG}</span>
+    <div class="csel-drop hidden">${optsHtml}</div>
+  </div>`;
+}
+
+function cselSetOptions(id, opts) {
+  if (!_csel[id]) return;
+  _csel[id].opts = opts;
+  const val = _csel[id].value;
+  const drop = document.querySelector(`#csel-${id} .csel-drop`);
+  if (!drop) return;
+  drop.innerHTML = opts.map(o =>
+    `<div class="csel-opt${o.v === val ? ' csel-selected' : ''}" data-csel-id="${id}" data-csel-val="${esc(o.v)}">${esc(o.l)}</div>`
+  ).join('');
+  const found = opts.find(o => o.v === val);
+  const valEl = document.querySelector(`#csel-${id} .csel-val`);
+  if (valEl) {
+    if (!found && val) { _csel[id].value = ''; valEl.textContent = _csel[id].placeholder || ''; valEl.classList.add('empty'); }
+    else if (found) { valEl.textContent = found.l; valEl.classList.remove('empty'); }
+  }
+}
+
+function cselOnChange(id, fn) { if (_csel[id]) _csel[id].onChange = fn; }
+function cselValue(id) { return _csel[id] ? _csel[id].value : ''; }
+
+// Global event delegation for custom selects
+document.addEventListener('click', e => {
+  const opt = e.target.closest('.csel-opt');
+  const sel = e.target.closest('.csel');
+
+  if (opt) {
+    e.stopPropagation();
+    const id = opt.dataset.cselId;
+    const val = opt.dataset.cselVal;
+    const data = _csel[id];
+    if (!data) return;
+    data.value = val;
+    const wrap = document.getElementById('csel-' + id);
+    if (wrap) {
+      const found = data.opts.find(o => o.v === val);
+      const valEl = wrap.querySelector('.csel-val');
+      if (valEl) { valEl.textContent = found ? found.l : val; valEl.classList.remove('empty'); }
+      wrap.classList.remove('open');
+      wrap.querySelector('.csel-drop').classList.add('hidden');
+      wrap.querySelectorAll('.csel-opt').forEach(o => o.classList.toggle('csel-selected', o.dataset.cselVal === val));
+    }
+    if (data.onChange) data.onChange(val);
+    return;
+  }
+
+  if (sel) {
+    e.stopPropagation();
+    document.querySelectorAll('.csel.open').forEach(s => {
+      if (s !== sel) { s.classList.remove('open'); s.querySelector('.csel-drop').classList.add('hidden'); }
+    });
+    const drop = sel.querySelector('.csel-drop');
+    const isOpen = !drop.classList.contains('hidden');
+    if (isOpen) { sel.classList.remove('open'); drop.classList.add('hidden'); }
+    else { sel.classList.add('open'); drop.classList.remove('hidden'); }
+    return;
+  }
+
+  document.querySelectorAll('.csel.open').forEach(s => {
+    s.classList.remove('open'); s.querySelector('.csel-drop').classList.add('hidden');
+  });
+});
+
 // ── Modal ────────────────────────────────────────────────────────────────
 function showModal(title, body, onConfirm, confirmLabel = 'Подтвердить', danger = false) {
   document.getElementById('modal-title').textContent = title;
@@ -451,7 +542,6 @@ function showModal(title, body, onConfirm, confirmLabel = 'Подтвердит�
   const btn = document.getElementById('modal-confirm-btn');
   btn.textContent = confirmLabel;
   btn.className = 'btn ' + (danger ? 'btn-danger' : 'btn-primary');
-  btn.style.background = danger ? '' : '';
   modalCallback = onConfirm;
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
@@ -528,14 +618,14 @@ function save() {
 // ── Helpers ───────────────────────────────────────────────────────────────
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function matLabel(m) {
-  if (!m) return 'удалён';
+  if (!m) return '—';
   return m.type === 'pipe' ? `Труба Ø${m.diameter}×${m.wall}` : `Профиль ${m.height}×${m.width}×${m.wall}`;
 }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── Material fields ───────────────────────────────────────────────────────
-function updateMatFields() {
-  const t = document.getElementById('mat-type').value;
+function updateMatFields(val) {
+  const t = val || cselValue('mat-type');
   document.getElementById('f-diam').style.display = t === 'pipe' ? '' : 'none';
   document.getElementById('f-h').style.display = t === 'profile' ? '' : 'none';
   document.getElementById('f-w').style.display = t === 'profile' ? '' : 'none';
@@ -543,12 +633,12 @@ function updateMatFields() {
 
 // ── Materials CRUD ────────────────────────────────────────────────────────
 function addMaterial() {
-  const type = document.getElementById('mat-type').value;
+  const type = cselValue('mat-type');
   const wall = parseFloat(document.getElementById('mat-wall').value);
   const stock = parseFloat(document.getElementById('mat-stock').value) || 0;
   const errEl = document.getElementById('mat-err');
   if (!wall || wall <= 0) { errEl.textContent = 'Укажите толщину стенки'; return; }
-  const mat = { id: genId(), type, wall, stock };
+  const mat = { id: genId(), type, wall, stock, peakStock: stock };
   if (type === 'pipe') {
     const d = parseFloat(document.getElementById('mat-diameter').value);
     if (!d || d <= 0) { errEl.textContent = 'Укажите диаметр'; return; }
@@ -582,14 +672,14 @@ function renderMaterials() {
           </div>
         </div>
         <div class="mat-card-actions">
-          <button class="btn btn-ghost btn-sm" onclick="startEditMat('${m.id}')">Изменить</button>
-          <button class="btn btn-danger btn-sm" onclick="askDeleteMat('${m.id}')">Удалить</button>
+          <button class="btn btn-ghost btn-sm" data-edit-mat="${m.id}">Изменить</button>
+          <button class="btn btn-danger btn-sm" data-del-mat="${m.id}">Удалить</button>
         </div>
       </div>
       <div class="mat-edit-row" id="me-${m.id}" style="display:none">
         <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Введите остаток" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
-        <button class="btn btn-primary btn-sm" onclick="askSaveMat('${m.id}')">Сохранить</button>
-        <button class="btn btn-ghost btn-sm" onclick="cancelEditMat('${m.id}')">Отмена</button>
+        <button class="btn btn-primary btn-sm" data-save-mat="${m.id}">Сохранить</button>
+        <button class="btn btn-ghost btn-sm" data-cancel-mat="${m.id}">Отмена</button>
       </div>
     </div>
   `).join('');
@@ -607,7 +697,11 @@ function askSaveMat(id) {
   if (isNaN(val) || val < 0) return;
   showModal('Изменить остаток', `Установить остаток: <b>${val.toFixed(2)} м</b>?`, () => {
     const m = state.materials.find(m => m.id === id);
-    if (m) { m.stock = val; save(); }
+    if (m) {
+      if (val > (m.peakStock || 0)) m.peakStock = val;
+      m.stock = val;
+      save();
+    }
   }, 'Сохранить');
 }
 
@@ -615,22 +709,19 @@ function askDeleteMat(id) {
   const m = state.materials.find(m => m.id === id);
   showModal('Удалить материал', `Удалить <b>${esc(matLabel(m))}</b>? Это действие нельзя отменить.`, () => {
     state.materials = state.materials.filter(m => m.id !== id);
+    state.products.forEach(p => { p.materials = p.materials.filter(x => x.matId !== id); });
     save();
   }, 'Удалить', true);
 }
 
 // ── Island infographic ─────────────────────────────────────────────────────
-const ISLAND_COLORS = ['#4A90D9','#5CB85C','#E67E22','#9B59B6','#1ABC9C','#E74C3C','#3498DB','#F39C12'];
-
 function renderIsland(elId) {
   const el = document.getElementById(elId);
   if (!el) return;
   if (!state.materials.length) { el.innerHTML = '<div class="island-empty">Нет материалов</div>'; return; }
-  const maxStock = Math.max(...state.materials.map(m => m.stock), 0.001);
-  const totalMeters = state.materials.reduce((s, m) => s + m.stock, 0);
-  el.innerHTML = state.materials.map((m, i) => {
-    const pct = Math.round(m.stock / maxStock * 100);
-    const color = ISLAND_COLORS[i % ISLAND_COLORS.length];
+  el.innerHTML = state.materials.map(m => {
+    const peak = (m.peakStock && m.peakStock > 0) ? m.peakStock : (m.stock > 0 ? m.stock : 1);
+    const pct = Math.min(Math.round(m.stock / peak * 100), 100);
     return `
       <div class="island-row">
         <div class="island-mat-name">
@@ -638,29 +729,31 @@ function renderIsland(elId) {
           ${esc(matLabel(m))}
         </div>
         <div class="island-bar-wrap">
-          <div class="island-bar" style="width:${pct}%;background:${color}"></div>
+          <div class="island-bar" style="width:${pct}%"></div>
         </div>
         <div class="island-meta">
           <span>${pct}%</span>
           <span class="island-stock-val">${m.stock.toFixed(2)} м</span>
         </div>
       </div>`;
-  }).join('') + `
-    <hr class="island-divider">
-    <div class="island-total"><span>Итого</span><span style="font-weight:600">${totalMeters.toFixed(2)} м</span></div>`;
+  }).join('');
 }
 
 // ── Products CRUD ─────────────────────────────────────────────────────────
-function renderProdMatSelect(selId) {
-  const sel = document.getElementById(selId);
-  if (!sel) return;
-  sel.innerHTML = state.materials.length
-    ? state.materials.map(m => `<option value="${m.id}">${esc(matLabel(m))}</option>`).join('')
-    : '<option value="">— сначала добавьте материалы —</option>';
+function renderProdMatSelect() {
+  const wrap = document.getElementById('prod-mat-select-wrap');
+  if (!wrap) return;
+  const opts = state.materials.map(m => ({ v: m.id, l: matLabel(m) }));
+  const iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`;
+  if (!document.getElementById('csel-prod-mat')) {
+    wrap.innerHTML = cselHtml('prod-mat', opts, opts[0]?.v || '', 'Выберите материал', iconSvg);
+  } else {
+    cselSetOptions('prod-mat', opts);
+  }
 }
 
 function addMatToProduct() {
-  const matId = document.getElementById('prod-mat-select').value;
+  const matId = cselValue('prod-mat');
   const qty = parseFloat(document.getElementById('prod-mat-qty').value);
   if (!matId || !qty || qty <= 0) return;
   const i = newProdMats.findIndex(x => x.matId === matId);
@@ -678,7 +771,7 @@ function renderNewProdMats() {
   document.getElementById('prod-mats-list').innerHTML = newProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
     return `<div class="added-mat">
-      <span>${esc(matLabel(m))} — расход: <b>${x.qty} м</b></span>
+      <span>${esc(matLabel(m))} — Расход: <b>${x.qty} м</b></span>
       <button class="btn btn-danger btn-sm" onclick="removeNewProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
@@ -700,23 +793,25 @@ function addProduct() {
 function renderProducts() {
   const el = document.getElementById('products-list');
   if (!state.products.length) { el.innerHTML = '<div class="empty">Нет изделий — создайте первое</div>'; return; }
-  el.innerHTML = state.products.map(p => `
+  el.innerHTML = state.products.map(p => {
+    const visibleMats = p.materials.filter(x => state.materials.find(m => m.id === x.matId));
+    return `
     <div class="prod-card">
       <div class="prod-card-top">
         <div class="prod-card-name">${esc(p.name)}</div>
-        <div style="display:flex;gap:4px">
-          <button class="btn btn-ghost btn-sm" onclick="startEditProduct('${p.id}')">Редактировать</button>
-          <button class="btn btn-danger btn-sm" onclick="askDeleteProduct('${p.id}')">Удалить</button>
+        <div style="display:flex;gap:4px;flex-shrink:0;margin-top:-2px">
+          <button class="btn btn-ghost btn-sm" data-edit-prod="${p.id}">Редактировать</button>
+          <button class="btn btn-danger btn-sm" data-del-prod="${p.id}">Удалить</button>
         </div>
       </div>
-      <div class="prod-card-body">
-        ${p.materials.map(x => {
+      ${visibleMats.length ? `<div class="prod-card-body">
+        ${visibleMats.map(x => {
           const m = state.materials.find(m => m.id === x.matId);
-          return `<div class="comp-row"><span>${esc(matLabel(m))}</span><span class="comp-val">расход: ${x.qty} м</span></div>`;
+          return `<div class="comp-row"><span>${esc(matLabel(m))}</span><span class="comp-val">Расход: ${x.qty} м</span></div>`;
         }).join('')}
-      </div>
-    </div>
-  `).join('');
+      </div>` : ''}
+    </div>`;
+  }).join('');
 }
 
 function askDeleteProduct(id) {
@@ -735,7 +830,7 @@ function startEditProduct(id) {
   const matsHtml = () => editProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
     return `<div class="added-mat" id="epm-${x.matId}">
-      <span>${esc(matLabel(m))} — расход: <b>${x.qty} м</b></span>
+      <span>${esc(matLabel(m))} — Расход: <b>${x.qty} м</b></span>
       <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
@@ -746,7 +841,7 @@ function startEditProduct(id) {
     <div style="margin-top:14px;margin-bottom:6px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Состав</div>
     <div id="edit-prod-mats">${matsHtml()}</div>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      <select id="edit-mat-sel" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:13px">${matOptions}</select>
+      <select id="edit-mat-sel" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;background:var(--bg);color:var(--text);outline:none">${matOptions}</select>
       <input type="number" id="edit-mat-qty" placeholder="м" min="0" step="0.01" style="width:80px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:13px">
       <button class="btn btn-secondary btn-sm" onclick="addEditProdMat()">+</button>
     </div>
@@ -767,7 +862,7 @@ function refreshEditProdMats() {
   el.innerHTML = editProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
     return `<div class="added-mat">
-      <span>${esc(matLabel(m))} — расход: <b>${x.qty} м</b></span>
+      <span>${esc(matLabel(m))} — Расход: <b>${x.qty} м</b></span>
       <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
@@ -788,29 +883,48 @@ function removeEditProdMat(matId) {
   refreshEditProdMats();
 }
 
+// ── Event delegation for material & product buttons ───────────────────────
+function initEventDelegation() {
+  document.getElementById('materials-list').addEventListener('click', e => {
+    const editBtn   = e.target.closest('[data-edit-mat]');
+    const delBtn    = e.target.closest('[data-del-mat]');
+    const saveBtn   = e.target.closest('[data-save-mat]');
+    const cancelBtn = e.target.closest('[data-cancel-mat]');
+    if (editBtn)   startEditMat(editBtn.dataset.editMat);
+    if (delBtn)    askDeleteMat(delBtn.dataset.delMat);
+    if (saveBtn)   askSaveMat(saveBtn.dataset.saveMat);
+    if (cancelBtn) cancelEditMat(cancelBtn.dataset.cancelMat);
+  });
+  document.getElementById('products-list').addEventListener('click', e => {
+    const editBtn = e.target.closest('[data-edit-prod]');
+    const delBtn  = e.target.closest('[data-del-prod]');
+    if (editBtn) startEditProduct(editBtn.dataset.editProd);
+    if (delBtn)  askDeleteProduct(delBtn.dataset.delProd);
+  });
+}
+
 // ── Writeoffs ─────────────────────────────────────────────────────────────
 function renderWoItems() {
   const el = document.getElementById('wo-items-list');
   if (!state.products.length) {
     el.innerHTML = '<div class="empty" style="margin-bottom:12px">Сначала создайте изделия</div>';
+    updateWoPreview();
     return;
   }
+  const prodOpts = state.products.map(p => ({ v: p.id, l: p.name }));
+  const tagIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
+  const listIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;
+
   el.innerHTML = woItems.map((item, i) => `
     <div class="wo-item-row">
       <div class="field">
         <label>Изделие</label>
-        <div class="input-wrap">
-          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
-          <select onchange="woItems[${i}].prodId=this.value;updateWoPreview()">
-            <option value="">— выберите —</option>
-            ${state.products.map(p => `<option value="${p.id}" ${item.prodId===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}
-          </select>
-        </div>
+        ${cselHtml('wo-prod-' + i, prodOpts, item.prodId, 'Выберите изделие', tagIcon)}
       </div>
       <div class="field narrow">
         <label>Кол-во (шт)</label>
         <div class="input-wrap">
-          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
+          <span class="ico">${listIcon}</span>
           <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="Введите кол-во"
             oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
         </div>
@@ -818,6 +932,10 @@ function renderWoItems() {
       ${woItems.length > 1 ? `<div style="padding-bottom:2px"><button class="btn btn-danger btn-sm" onclick="removeWoItem(${i})">✕</button></div>` : ''}
     </div>
   `).join('');
+
+  woItems.forEach((item, i) => {
+    cselOnChange('wo-prod-' + i, val => { woItems[i].prodId = val; updateWoPreview(); });
+  });
   updateWoPreview();
 }
 
@@ -826,12 +944,14 @@ function removeWoItem(i) { woItems.splice(i, 1); renderWoItems(); }
 
 function updateWoPreview() {
   const el = document.getElementById('wo-preview');
+  woItems.forEach((item, i) => {
+    const v = cselValue('wo-prod-' + i);
+    if (v) item.prodId = v;
+  });
   const validItems = woItems.filter(x => x.prodId && x.qty > 0);
   if (!validItems.length) { el.innerHTML = ''; return; }
 
-  // Aggregate material needs
   const needs = {};
-  let allOk = true;
   for (const item of validItems) {
     const p = state.products.find(p => p.id === item.prodId);
     if (!p) continue;
@@ -841,6 +961,7 @@ function updateWoPreview() {
     }
   }
 
+  let allOk = true;
   const rows = validItems.map(item => {
     const p = state.products.find(p => p.id === item.prodId);
     if (!p) return '';
@@ -859,13 +980,13 @@ function updateWoPreview() {
 
 function doWriteoff() {
   const errEl = document.getElementById('wo-err');
-  const okEl = document.getElementById('wo-ok');
+  const okEl  = document.getElementById('wo-ok');
   errEl.textContent = ''; okEl.textContent = '';
 
+  woItems.forEach((item, i) => { const v = cselValue('wo-prod-' + i); if (v) item.prodId = v; });
   const validItems = woItems.filter(x => x.prodId && x.qty > 0);
   if (!validItems.length) { errEl.textContent = 'Добавьте хотя бы одно изделие'; return; }
 
-  // Check all stocks
   const needs = {};
   for (const item of validItems) {
     const p = state.products.find(p => p.id === item.prodId);
@@ -880,13 +1001,11 @@ function doWriteoff() {
     if (!m || m.stock < total) { errEl.textContent = `Недостаточно материала: ${matLabel(m)}`; return; }
   }
 
-  // Deduct
   for (const [matId, total] of Object.entries(needs)) {
     const m = state.materials.find(m => m.id === matId);
     m.stock = Math.round((m.stock - total) * 1000) / 1000;
   }
 
-  // Record writeoffs
   for (const item of validItems) {
     const p = state.products.find(p => p.id === item.prodId);
     const items = p.materials.map(x => {
@@ -907,17 +1026,18 @@ function doWriteoff() {
 }
 
 // ── Day navigation ─────────────────────────────────────────────────────────
-function prevSummaryDay() { summaryDay = new Date(summaryDay - 86400000); renderDayHistory(); }
+function prevSummaryDay() { summaryDay = new Date(summaryDay - 86400000); renderSummary(); }
 function nextSummaryDay() {
   const next = new Date(summaryDay.getTime() + 86400000);
   const today = new Date(); today.setHours(0,0,0,0);
-  if (next <= today) { summaryDay = next; renderDayHistory(); }
+  if (next <= today) { summaryDay = next; renderSummary(); }
 }
+
 function renderDayHistory() {
   const today = new Date(); today.setHours(0,0,0,0);
   const isToday = summaryDay.getTime() === today.getTime();
-  const isYest = summaryDay.getTime() === today.getTime() - 86400000;
-  const label = isToday ? 'Сегодня' : isYest ? 'Вчера' : summaryDay.toLocaleDateString('ru', {day:'2-digit',month:'long',year:'numeric'});
+  const isYest  = summaryDay.getTime() === today.getTime() - 86400000;
+  const label   = isToday ? 'Сегодня' : isYest ? 'Вчера' : summaryDay.toLocaleDateString('ru', {day:'2-digit',month:'long',year:'numeric'});
   document.getElementById('day-nav-label').textContent = label;
   const nextBtn = document.getElementById('day-nav-next');
   if (nextBtn) nextBtn.disabled = isToday;
@@ -945,12 +1065,23 @@ function renderDayHistory() {
 
 // ── Summary ────────────────────────────────────────────────────────────────
 function renderSummary() {
-  const total = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
-  const totalM = state.writeoffs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const isToday = summaryDay.getTime() === today.getTime();
+  const isYest  = summaryDay.getTime() === today.getTime() - 86400000;
+  const dayLabel = isToday ? 'сегодня' : isYest ? 'вчера' : summaryDay.toLocaleDateString('ru', {day:'2-digit',month:'short'});
+
+  // Stats for selected day only
+  const dayWOs  = state.writeoffs.filter(w => {
+    const d = new Date(w.timestamp); d.setHours(0,0,0,0);
+    return d.getTime() === summaryDay.getTime();
+  });
+  const total  = dayWOs.reduce((s, w) => s + w.quantity, 0);
+  const totalM = dayWOs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
+
   document.getElementById('stat-row').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Списано изделий</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Списано (${dayLabel})</div><div class="stat-val">${total}</div></div>
     <div class="stat-card"><div class="stat-label">Материалов (м)</div><div class="stat-val">${totalM.toFixed(1)}</div></div>
-    <div class="stat-card"><div class="stat-label">Операций</div><div class="stat-val">${state.writeoffs.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Операций</div><div class="stat-val">${dayWOs.length}</div></div>
     <div class="stat-card"><div class="stat-label">На складе (м)</div><div class="stat-val">${state.materials.reduce((s,m)=>s+m.stock,0).toFixed(1)}</div></div>
   `;
 
@@ -980,7 +1111,7 @@ function renderSummary() {
 // ── Render all ────────────────────────────────────────────────────────────
 function renderAll() {
   renderMaterials();
-  renderProdMatSelect('prod-mat-select');
+  renderProdMatSelect();
   renderProducts();
   renderWoItems();
   renderIsland('island-mats-1');
@@ -991,7 +1122,17 @@ function renderAll() {
 // ── Init ──────────────────────────────────────────────────────────────────
 async function initApp() {
   loadLocal();
-  updateMatFields();
+
+  const tagIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
+  document.getElementById('mat-type-wrap').innerHTML = cselHtml(
+    'mat-type',
+    [{v:'pipe',l:'Труба'},{v:'profile',l:'Профиль'}],
+    'pipe', 'Тип', tagIcon
+  );
+  cselOnChange('mat-type', updateMatFields);
+  updateMatFields('pipe');
+
+  initEventDelegation();
   renderAll();
   setSyncStatus(false, 'Синхронизация...');
   const result = await loadCloud();
