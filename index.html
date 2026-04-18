@@ -447,10 +447,10 @@ let summaryDay = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; }
 function normalizeState(s) {
   if (!s || typeof s !== 'object') return { materials: [], products: [], writeoffs: [] };
   return {
-    materials:  Array.isArray(s.materials)  ? s.materials  : [],
-    products:   Array.isArray(s.products)   ? s.products   : [],
-    writeoffs:  Array.isArray(s.writeoffs)  ? s.writeoffs  : [],
-    updatedAt:  s.updatedAt || null,
+    materials: Array.isArray(s.materials) ? s.materials.map(m => ({ ...m, stock: m.stock ?? 0, peakStock: m.peakStock ?? m.stock ?? 0 })) : [],
+    products:  Array.isArray(s.products)  ? s.products.map(p => ({ ...p, materials: Array.isArray(p.materials) ? p.materials : [] })) : [],
+    writeoffs: Array.isArray(s.writeoffs) ? s.writeoffs.map(w => ({ ...w, items: Array.isArray(w.items) ? w.items : [] })) : [],
+    updatedAt: s.updatedAt || null,
   };
 }
 
@@ -585,7 +585,7 @@ let _dirtyLocal = false;
 let _syncRetryTimer = null;
 
 function loadLocal() {
-  try { const s = localStorage.getItem(STORE_KEY); if (s) state = normalizeState(JSON.parse(s)); } catch(e) {}
+  try { const s = localStorage.getItem(STORE_KEY); if (s) state = normalizeState(JSON.parse(s)); } catch(e) { state = normalizeState(null); }
 }
 function saveLocal() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
@@ -1158,6 +1158,7 @@ function renderAll() {
 
 // ── Init ──────────────────────────────────────────────────────────────────
 async function initApp() {
+  setSyncStatus(false, 'Синхронизация...');
   loadLocal();
 
   const tagIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
@@ -1171,14 +1172,14 @@ async function initApp() {
 
   initEventDelegation();
   renderAll();
-  setSyncStatus(false, 'Синхронизация...');
   const result = await loadCloud();
   if (result === 'loaded') {
     saveLocal(); renderAll(); setSyncStatus(true, 'Синхронизировано');
   } else if (result === 'empty') {
-    saveCloud().then(() => setSyncStatus(true, 'Синхронизировано'));
+    const ok = await saveCloud();
+    setSyncStatus(ok, ok ? 'Синхронизировано' : 'Нет связи — проверьте правила БД');
   } else {
-    setSyncStatus(false, 'Нет связи');
+    setSyncStatus(false, 'Нет связи — проверьте правила БД');
   }
   // No auto-pull interval — pulls overwrite local changes when cloud writes fail.
   // Data loads on startup; all saves push immediately with retry on failure.
