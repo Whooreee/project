@@ -447,9 +447,10 @@ let summaryDay = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; }
 function normalizeState(s) {
   if (!s || typeof s !== 'object') return { materials: [], products: [], writeoffs: [] };
   return {
-    materials: Array.isArray(s.materials) ? s.materials : [],
-    products:  Array.isArray(s.products)  ? s.products  : [],
-    writeoffs: Array.isArray(s.writeoffs) ? s.writeoffs : [],
+    materials:  Array.isArray(s.materials)  ? s.materials  : [],
+    products:   Array.isArray(s.products)   ? s.products   : [],
+    writeoffs:  Array.isArray(s.writeoffs)  ? s.writeoffs  : [],
+    updatedAt:  s.updatedAt || null,
   };
 }
 
@@ -1083,7 +1084,7 @@ function renderDayHistory() {
 
   const rows = dayWOs.map(w => {
     const time = new Date(w.timestamp).toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'});
-    const mats = w.items.map(i => `<span class="wo-mat-chip">${esc(i.materialName)}: ${i.meters.toFixed(2)} м</span>`).join(' ');
+    const mats = (w.items || []).map(i => `<span class="wo-mat-chip">${esc(i.materialName)}: ${i.meters.toFixed(2)} м</span>`).join(' ');
     return `<tr><td>${time}</td><td style="font-weight:500">${esc(w.productName)}</td><td>${w.quantity} шт.</td><td>${mats}</td></tr>`;
   }).join('');
 
@@ -1106,7 +1107,7 @@ function renderSummary() {
     return d.getTime() === summaryDay.getTime();
   });
   const total  = dayWOs.reduce((s, w) => s + w.quantity, 0);
-  const totalM = dayWOs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
+  const totalM = dayWOs.reduce((s, w) => s + (w.items || []).reduce((ss, i) => ss + i.meters, 0), 0);
 
   document.getElementById('stat-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Списано (${dayLabel})</div><div class="stat-val">${total}</div></div>
