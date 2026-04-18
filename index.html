@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ваня</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      background: #0f0f0f;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 3rem;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    .counter {
+      color: #aaaaaa;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+    }
+
+    .counter span {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+
+    button {
+      padding: 16px 48px;
+      font-size: 1rem;
+      font-family: inherit;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      background: linear-gradient(135deg, #6c63ff, #48c6ef);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(108, 99, 255, 0.4);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      box-shadow: 0 6px 32px rgba(108, 99, 255, 0.6);
+    }
+
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 12px rgba(108, 99, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <h1>Меня зовут Ваня</h1>
+  <p class="counter">Кликов: <span id="count">0</span></p>
+  <button onclick="document.getElementById('count').textContent = +document.getElementById('count').textContent + 1">
+    Нажми меня
+  </button>
+</body>
+</html>
