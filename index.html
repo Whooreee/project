@@ -447,9 +447,15 @@ let summaryDay = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; }
 function normalizeState(s) {
   if (!s || typeof s !== 'object') return { materials: [], products: [], writeoffs: [] };
   return {
-    materials: Array.isArray(s.materials) ? s.materials.map(m => ({ ...m, stock: m.stock ?? 0, peakStock: m.peakStock ?? m.stock ?? 0 })) : [],
-    products:  Array.isArray(s.products)  ? s.products.map(p => ({ ...p, materials: Array.isArray(p.materials) ? p.materials : [] })) : [],
-    writeoffs: Array.isArray(s.writeoffs) ? s.writeoffs.map(w => ({ ...w, items: Array.isArray(w.items) ? w.items : [] })) : [],
+    materials: Array.isArray(s.materials) ? s.materials
+      .filter(m => m && m.id)
+      .map(m => ({ ...m, stock: m.stock ?? 0, peakStock: m.peakStock ?? m.stock ?? 0 })) : [],
+    products: Array.isArray(s.products) ? s.products
+      .filter(p => p && p.id)
+      .map(p => ({ ...p, materials: Array.isArray(p.materials) ? p.materials.map(x => ({ ...x, qty: x.qty ?? x.amount ?? 0 })) : [] })) : [],
+    writeoffs: Array.isArray(s.writeoffs) ? s.writeoffs
+      .filter(w => w && w.id)
+      .map(w => ({ ...w, items: Array.isArray(w.items) ? w.items : [] })) : [],
     updatedAt: s.updatedAt || null,
   };
 }
