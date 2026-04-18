@@ -3,286 +3,395 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Склад</title>
+  <title>Прокситерм</title>
   <style>
     :root {
-      --bg: #ffffff;
-      --bg2: #f7f7f5;
-      --border: #e6e6e6;
-      --text: #1a1a1a;
-      --text2: #6b6b6b;
-      --muted: #9b9b9b;
-      --red: #c0392b;
-      --red2: #a93226;
-      --radius: 8px;
-      --font: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+      --bg: #FFFFFF;
+      --bg-soft: #F9F9F8;
+      --bg-hover: #F2F1EF;
+      --border: #EAEAE8;
+      --border-h: #D4D4D1;
+      --text: #1C1C1C;
+      --text2: #787774;
+      --text3: #B0ABA6;
+      --black: #1C1C1C;
+      --black-h: #37352F;
+      --danger: #EB5757;
+      --danger-bg: #FFF0F0;
+      --success: #27AE60;
+      --pipe: #4A90D9;
+      --profile: #5CB85C;
+      --r: 8px;
+      --r-lg: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+      --shadow: 0 1px 4px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.11);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font); font-size: 15px; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); font-size: 14px; line-height: 1.5; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+    input, select, button, textarea { font-family: var(--font); }
 
-    /* auth */
-    .auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    /* ── Auth ──────────────────────────────────── */
+    .auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 200; }
     .auth-screen.hidden { display: none; }
-    .auth-card { width: 100%; max-width: 300px; margin: 16px; padding: 36px 24px; border: 1px solid var(--border); border-radius: 12px; text-align: center; }
-    .auth-title { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
-    .auth-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
-    .auth-input { width: 100%; padding: 11px 14px; font-size: 18px; letter-spacing: 0.15em; border: 1px solid var(--border); border-radius: 8px; outline: none; font-family: var(--font); margin-bottom: 12px; text-align: center; background: var(--bg2); }
-    .auth-input:focus { border-color: #aaa; background: var(--bg); }
-    .auth-error { color: var(--red); font-size: 13px; margin-top: 8px; min-height: 18px; }
+    .auth-card { width: 100%; max-width: 320px; margin: 16px; padding: 40px 28px; border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); text-align: center; }
+    .auth-logo { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .auth-sub { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
+    .auth-input { width: 100%; padding: 11px 14px; font-size: 18px; letter-spacing: 0.2em; border: 1px solid var(--border); border-radius: var(--r); outline: none; text-align: center; background: var(--bg-soft); margin-bottom: 12px; }
+    .auth-input:focus { border-color: var(--border-h); background: var(--bg); }
+    .auth-err { color: var(--danger); font-size: 13px; margin-top: 8px; min-height: 18px; }
 
-    /* layout */
-    .app { max-width: 800px; margin: 0 auto; padding: 0 20px 80px; }
-    .header { padding: 24px 0 0; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
-    .header h1 { font-size: 20px; font-weight: 600; }
-    .sync-status { font-size: 11px; color: var(--muted); }
+    /* ── Modal ─────────────────────────────────── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 300; backdrop-filter: blur(2px); }
+    .modal-overlay.hidden { display: none; }
+    .modal-box { background: var(--bg); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); padding: 28px; width: 100%; max-width: 400px; margin: 16px; }
+    .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .modal-body { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+    .modal-body input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--r); outline: none; font-size: 14px; margin-top: 10px; }
+    .modal-body input:focus { border-color: var(--border-h); }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-    /* tabs */
-    .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
-    .tab-btn { padding: 8px 16px; font-size: 14px; font-family: var(--font); color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color 0.15s; flex-shrink: 0; }
+    /* ── App layout ────────────────────────────── */
+    .app { max-width: 1080px; margin: 0 auto; padding: 0 24px 100px; }
+    .header { display: flex; justify-content: space-between; align-items: baseline; padding: 32px 0 0; margin-bottom: 20px; }
+    .header-title { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+    .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); display: inline-block; margin-right: 5px; vertical-align: middle; }
+    .sync-dot.ok { background: var(--success); }
+    #sync-status { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+
+    /* ── Tabs ──────────────────────────────────── */
+    .tabs { display: flex; border-bottom: 1.5px solid var(--border); overflow: hidden; margin-bottom: 0; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { padding: 9px 20px; font-size: 13px; font-weight: 500; color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap; transition: color 0.13s; }
     .tab-btn:hover { color: var(--text); }
-    .tab-btn.active { color: var(--text); border-bottom-color: var(--red); font-weight: 500; }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
 
-    /* section */
+    /* ── Two column ────────────────────────────── */
+    .two-col { display: grid; grid-template-columns: 1fr 300px; gap: 28px; align-items: start; padding-top: 28px; }
+    .col-main { min-width: 0; }
+
+    /* ── Island ────────────────────────────────── */
+    .island { position: sticky; top: 24px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; }
+    .island-title { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; }
+    .island-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 12px 0; }
+    .island-row { margin-bottom: 16px; }
+    .island-row:last-child { margin-bottom: 0; }
+    .island-mat-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .island-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 3px; }
+    .island-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+    .island-meta { font-size: 11px; color: var(--text3); display: flex; justify-content: space-between; }
+    .island-stock-val { font-size: 13px; font-weight: 600; color: var(--text); }
+    .island-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+    .island-total { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); }
+
+    /* ── Section ───────────────────────────────── */
     .section { margin-bottom: 32px; }
-    .section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); }
 
-    /* form */
-    .form { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-    .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 10px; }
-    .form-row:last-child { margin-bottom: 0; }
-    .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 90px; }
-    .field label { font-size: 12px; color: var(--text2); }
-    .field input, .field select { font-family: var(--font); font-size: 14px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); outline: none; width: 100%; }
-    .field input:focus, .field select:focus { border-color: #aaa; }
+    /* ── Form block ────────────────────────────── */
+    .form-block { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 20px 16px; margin-bottom: 20px; }
+    .form-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 88px; }
+    .field.narrow { max-width: 120px; }
+    .field label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
+    .field input, .field select { padding: 8px 11px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); color: var(--text); outline: none; transition: border-color 0.13s, box-shadow 0.13s; }
+    .field input:focus, .field select:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+    .form-actions { display: flex; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); margin-top: 4px; flex-wrap: wrap; }
 
-    /* buttons */
-    .btn { font-family: var(--font); font-size: 13px; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; transition: background 0.12s; white-space: nowrap; line-height: 1.4; }
-    .btn-primary { background: var(--red); color: #fff; border-color: var(--red); }
-    .btn-primary:hover { background: var(--red2); border-color: var(--red2); }
-    .btn-ghost { background: none; color: var(--red); border-color: var(--red); }
-    .btn-ghost:hover { background: #fdf2f2; }
-    .btn-danger { background: none; color: #cc3333; border-color: transparent; padding: 4px 8px; font-size: 12px; }
-    .btn-danger:hover { background: #fff0f0; }
+    /* ── Buttons ───────────────────────────────── */
+    .btn { font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: var(--r); border: 1px solid transparent; cursor: pointer; transition: all 0.12s; line-height: 1.4; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .btn-primary { background: var(--black); color: #fff; border-color: var(--black); }
+    .btn-primary:hover { background: var(--black-h); }
+    .btn-secondary { background: var(--bg); color: var(--text); border-color: var(--border); }
+    .btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-h); }
+    .btn-ghost { background: transparent; color: var(--text2); border-color: transparent; padding: 6px 10px; font-size: 12px; }
+    .btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+    .btn-danger { background: transparent; color: var(--danger); border-color: transparent; padding: 6px 10px; font-size: 12px; }
+    .btn-danger:hover { background: var(--danger-bg); }
+    .btn-sm { padding: 5px 11px; font-size: 12px; }
 
-    /* material list */
-    .item-list { display: flex; flex-direction: column; gap: 6px; }
-    .mat-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); gap: 12px; flex-wrap: wrap; }
-    .mat-name { font-size: 14px; font-weight: 500; flex: 1; min-width: 140px; }
-    .mat-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
-    .tag-pipe { background: #e6f0ff; color: #1a5cb5; }
-    .tag-profile { background: #e6f7ee; color: #1a7a3c; }
-    .stock-row { display: flex; align-items: center; gap: 6px; }
-    .stock-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); flex-shrink: 0; }
-    .stock-btn:hover { background: var(--bg2); }
-    .stock-input { width: 58px; text-align: center; font-size: 13px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font); outline: none; }
-    .stock-val { font-size: 14px; font-weight: 600; min-width: 70px; text-align: right; }
+    /* ── Badge / Tag ───────────────────────────── */
+    .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.03em; }
+    .badge-pipe { background: #E8F0FD; color: #2D6CC4; }
+    .badge-profile { background: #E8F7EE; color: #1E7A3C; }
 
-    /* product */
-    .prod-item { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); overflow: hidden; }
-    .prod-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
-    .prod-name { font-size: 14px; font-weight: 500; }
-    .prod-body { padding: 0 14px 10px; border-top: 1px solid var(--border); padding-top: 8px; }
-    .comp-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 2px 0; }
-    .added-mat { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; font-size: 13px; color: var(--text2); }
+    /* ── Material cards ────────────────────────── */
+    .mat-list { display: flex; flex-direction: column; gap: 8px; }
+    .mat-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; transition: border-color 0.13s; }
+    .mat-card:hover { border-color: var(--border-h); }
+    .mat-card-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+    .mat-card-info { flex: 1; min-width: 0; }
+    .mat-card-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+    .mat-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .mat-card-stock { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+    .mat-card-unit { font-size: 12px; color: var(--text3); font-weight: 400; margin-left: 2px; }
+    .mat-edit-row { display: flex; align-items: center; gap: 8px; padding: 0 16px 14px; }
+    .mat-edit-row input { flex: 1; padding: 8px 11px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--r); outline: none; }
+    .mat-edit-row input:focus { border-color: var(--border-h); }
 
-    /* preview */
-    .preview-box { margin-top: 10px; padding: 12px; background: var(--bg); border-radius: 6px; border: 1px solid var(--border); }
-    .preview-title { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .preview-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 2px 0; }
-    .not-enough { color: #cc3333 !important; }
+    /* ── Product cards ─────────────────────────── */
+    .prod-list { display: flex; flex-direction: column; gap: 8px; }
+    .prod-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; }
+    .prod-card:hover { border-color: var(--border-h); }
+    .prod-card-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+    .prod-card-name { font-size: 14px; font-weight: 500; flex: 1; }
+    .prod-card-body { padding: 0 16px 14px; border-top: 1px solid var(--border); padding-top: 10px; }
+    .comp-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text2); padding: 3px 0; }
+    .comp-val { font-weight: 500; color: var(--text); }
+    .added-mat { display: flex; justify-content: space-between; align-items: center; padding: 7px 11px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 6px; font-size: 13px; color: var(--text2); }
 
-    /* stats */
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
-    .stat-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); }
-    .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-    .stat-value { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+    /* ── Writeoff form ─────────────────────────── */
+    .wo-item-row { display: flex; align-items: flex-end; gap: 10px; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); margin-bottom: 8px; flex-wrap: wrap; }
+    .wo-item-row .field { min-width: 140px; }
+    .wo-item-row .field.narrow { max-width: 100px; }
+    .wo-preview { margin-top: 12px; padding: 14px 16px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); }
+    .wo-preview-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+    .wo-preview-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 3px 0; }
+    .wo-preview-mat { font-size: 12px; color: var(--text3); padding: 2px 0 2px 12px; }
+    .not-enough { color: var(--danger) !important; }
+    .wo-add-btn { margin-bottom: 16px; }
 
-    /* table */
-    .bd-table { width: 100%; border-collapse: collapse; }
-    .bd-table th, .bd-table td { text-align: left; padding: 9px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
-    .bd-table th { font-size: 12px; color: var(--muted); font-weight: 500; }
-    .bd-table td { color: var(--text2); }
-    .bd-table td:first-child { color: var(--text); }
+    /* ── Summary / Итог ────────────────────────── */
+    .stat-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .stat-card { flex: 1; min-width: 120px; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg-soft); }
+    .stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 6px; }
+    .stat-val { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+    .chart-section { margin-bottom: 28px; }
+    .chart-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 14px; }
+    .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+    .chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .chart-bar-fill { width: 100%; border-radius: 4px 4px 0 0; background: var(--text); opacity: 0.12; min-height: 3px; transition: height 0.3s; }
+    .chart-bar-fill.has-data { opacity: 0.85; background: var(--black); }
+    .chart-day-label { font-size: 10px; color: var(--text3); text-align: center; }
+    .chart-day-val { font-size: 11px; font-weight: 600; color: var(--text2); }
+    .day-group { margin-bottom: 28px; }
+    .day-label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .wo-entry { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .wo-entry:last-child { border-bottom: none; }
+    .wo-entry-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+    .wo-entry-name { font-size: 14px; font-weight: 600; }
+    .wo-entry-time { font-size: 11px; color: var(--text3); }
+    .wo-entry-qty { font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+    .wo-entry-mats { display: flex; flex-wrap: wrap; gap: 6px; }
+    .wo-mat-chip { font-size: 11px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--text2); }
 
-    /* history */
-    .hist-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .hist-item:last-child { border-bottom: none; }
-    .hist-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; flex-wrap: wrap; gap: 4px; }
-    .hist-name { font-size: 14px; font-weight: 500; }
-    .hist-date { font-size: 12px; color: var(--muted); }
-    .hist-detail { font-size: 13px; color: var(--text2); }
+    /* ── Empty state ───────────────────────────── */
+    .empty { padding: 28px 20px; text-align: center; color: var(--text3); font-size: 13px; border: 1px dashed var(--border); border-radius: var(--r-lg); }
 
-    /* misc */
-    .empty { padding: 24px; text-align: center; color: var(--muted); font-size: 14px; border: 1px dashed var(--border); border-radius: var(--radius); }
-    .err { font-size: 13px; color: #cc3333; margin-top: 8px; min-height: 18px; }
-    .ok { font-size: 13px; color: #2d7a2d; margin-top: 8px; min-height: 18px; }
+    /* ── Error / OK ────────────────────────────── */
+    .err { font-size: 12px; color: var(--danger); margin-top: 8px; min-height: 16px; }
+    .ok-msg { font-size: 12px; color: var(--success); margin-top: 8px; min-height: 16px; }
 
-    /* mobile */
+    /* ── Responsive ────────────────────────────── */
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+      .island { position: static; }
+    }
     @media (max-width: 600px) {
-      .app { padding: 0 12px 80px; }
-      .tabs { margin-bottom: 16px; }
-      .tab-btn { padding: 8px 12px; font-size: 13px; }
-      .form { padding: 12px; }
-      .form-row { flex-direction: column; gap: 8px; }
-      .field { min-width: unset; width: 100%; }
+      .app { padding: 0 14px 80px; }
+      .header { padding-top: 20px; margin-bottom: 14px; }
+      .header-title { font-size: 20px; }
+      .tab-btn { padding: 8px 14px; font-size: 12px; }
+      .two-col { padding-top: 18px; gap: 18px; }
+      .form-block { padding: 14px 14px 12px; }
+      .form-grid { gap: 10px; }
+      .field { min-width: 100%; }
+      .field.narrow { max-width: 100%; }
       .field input, .field select { font-size: 16px; padding: 10px 12px; min-height: 44px; }
-      .btn { min-height: 44px; padding: 10px 16px; font-size: 14px; width: 100%; }
-      .btn-danger { width: auto; min-height: 36px; }
-      .mat-item { flex-direction: column; align-items: flex-start; }
-      .stock-row { width: 100%; }
-      .stock-btn { width: 44px; height: 44px; }
-      .stock-input { flex: 1; min-height: 44px; font-size: 16px; }
-      .stats-grid { gap: 8px; }
-      .stat-value { font-size: 20px; }
+      .btn-primary, .btn-secondary { min-height: 44px; padding: 10px 16px; }
+      .mat-card-stock { font-size: 17px; }
+      .stat-val { font-size: 22px; }
+      .wo-item-row .field { min-width: 100%; }
     }
   </style>
 </head>
 <body>
 
+<!-- Modal -->
+<div id="modal-overlay" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div id="modal-title" class="modal-title"></div>
+    <div id="modal-body" class="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="hideModal()">Отмена</button>
+      <button id="modal-confirm-btn" class="btn btn-primary" onclick="confirmModal()">Подтвердить</button>
+    </div>
+  </div>
+</div>
+
 <!-- Auth -->
 <div id="auth-screen" class="auth-screen">
   <div class="auth-card">
-    <div class="auth-title">Склад</div>
+    <div class="auth-logo">Прокситерм</div>
     <div class="auth-sub">Введите пароль для входа</div>
     <input type="password" id="auth-input" class="auth-input" placeholder="••••"
       onkeydown="if(event.key==='Enter') doLogin()">
-    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Войти</button>
-    <div id="auth-error" class="auth-error"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">Войти</button>
+    <div id="auth-err" class="auth-err"></div>
   </div>
 </div>
 
 <!-- App -->
 <div class="app">
   <div class="header">
-    <h1>Склад</h1>
-    <span id="sync-status" class="sync-status"></span>
+    <div class="header-title">Прокситерм</div>
+    <div id="sync-status"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">—</span></div>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('materials')">Материалы</button>
+    <button class="tab-btn active" onclick="switchTab('sklad')">Склад</button>
     <button class="tab-btn" onclick="switchTab('products')">Изделия</button>
     <button class="tab-btn" onclick="switchTab('writeoffs')">Списания</button>
     <button class="tab-btn" onclick="switchTab('summary')">Итог</button>
   </div>
 
-  <!-- Материалы -->
-  <div id="tab-materials" class="tab-pane active">
-    <div class="form">
-      <div class="form-row">
-        <div class="field" style="max-width:130px">
-          <label>Тип</label>
-          <select id="mat-type" onchange="updateMatFields()">
-            <option value="pipe">Труба</option>
-            <option value="profile">Профиль</option>
-          </select>
+  <!-- ═══ СКЛАД ════════════════════════════════════════════════════════ -->
+  <div id="tab-sklad" class="tab-pane active">
+    <div class="two-col">
+      <div class="col-main">
+
+        <div class="form-block">
+          <div class="section-label" style="margin-bottom:16px">Добавить материал</div>
+          <div class="form-grid">
+            <div class="field narrow">
+              <label>Тип</label>
+              <select id="mat-type" onchange="updateMatFields()">
+                <option value="pipe">Труба</option>
+                <option value="profile">Профиль</option>
+              </select>
+            </div>
+            <div class="field" id="f-diam">
+              <label>Диаметр (мм)</label>
+              <input type="number" id="mat-diameter" placeholder="57" min="0">
+            </div>
+            <div class="field" id="f-h" style="display:none">
+              <label>Высота (мм)</label>
+              <input type="number" id="mat-height" placeholder="60" min="0">
+            </div>
+            <div class="field" id="f-w" style="display:none">
+              <label>Ширина (мм)</label>
+              <input type="number" id="mat-width" placeholder="40" min="0">
+            </div>
+            <div class="field narrow">
+              <label>Стенка (мм)</label>
+              <input type="number" id="mat-wall" placeholder="3.5" min="0" step="0.1">
+            </div>
+            <div class="field narrow">
+              <label>Остаток (м)</label>
+              <input type="number" id="mat-stock" placeholder="0" min="0" step="0.01">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="addMaterial()">+ Добавить материал</button>
+          </div>
+          <div id="mat-err" class="err"></div>
         </div>
-        <div class="field" id="f-diameter">
-          <label>Диаметр (мм)</label>
-          <input type="number" id="mat-diameter" placeholder="57" min="0">
-        </div>
-        <div class="field" id="f-height" style="display:none">
-          <label>Высота (мм)</label>
-          <input type="number" id="mat-height" placeholder="60" min="0">
-        </div>
-        <div class="field" id="f-width" style="display:none">
-          <label>Ширина (мм)</label>
-          <input type="number" id="mat-width" placeholder="40" min="0">
-        </div>
-        <div class="field">
-          <label>Стенка (мм)</label>
-          <input type="number" id="mat-wall" placeholder="3.5" min="0" step="0.1">
-        </div>
-        <div class="field">
-          <label>Остаток (м)</label>
-          <input type="number" id="mat-stock" placeholder="0" min="0" step="0.01">
+
+        <div class="section">
+          <div class="section-head">
+            <div class="section-label">Материалы</div>
+          </div>
+          <div id="materials-list" class="mat-list"></div>
         </div>
       </div>
-      <div class="form-row">
-        <button class="btn btn-primary" onclick="addMaterial()">Добавить материал</button>
+
+      <div class="island">
+        <div class="island-title">Складской остаток</div>
+        <div id="island-mats-1"></div>
       </div>
-      <div id="mat-error" class="err"></div>
     </div>
-    <div id="materials-list" class="item-list"></div>
   </div>
 
-  <!-- Изделия -->
+  <!-- ═══ ИЗДЕЛИЯ ══════════════════════════════════════════════════════ -->
   <div id="tab-products" class="tab-pane">
-    <div class="form">
-      <div class="form-row">
-        <div class="field">
-          <label>Название изделия</label>
-          <input type="text" id="prod-name" placeholder="Например: Рама 2м">
+    <div class="two-col">
+      <div class="col-main">
+
+        <div class="form-block">
+          <div class="section-label" style="margin-bottom:16px">Создать изделие</div>
+          <div class="form-grid">
+            <div class="field" style="min-width:200px">
+              <label>Название</label>
+              <input type="text" id="prod-name" placeholder="Например: Рама 2м">
+            </div>
+          </div>
+          <div class="form-grid" id="prod-mat-form-row" style="align-items:flex-end">
+            <div class="field">
+              <label>Материал</label>
+              <select id="prod-mat-select"></select>
+            </div>
+            <div class="field narrow">
+              <label>Кол-во (м)</label>
+              <input type="number" id="prod-mat-qty" placeholder="1" min="0" step="0.01">
+            </div>
+            <div class="field" style="flex:0;min-width:auto;justify-content:flex-end">
+              <label style="visibility:hidden">add</label>
+              <button class="btn btn-secondary btn-sm" onclick="addMatToProduct()">+ Материал</button>
+            </div>
+          </div>
+          <div id="prod-mats-list"></div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="addProduct()">Создать изделие</button>
+          </div>
+          <div id="prod-err" class="err"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <div class="section-label">Изделия</div>
+          </div>
+          <div id="products-list" class="prod-list"></div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Материал</label>
-          <select id="prod-mat-select"></select>
-        </div>
-        <div class="field" style="max-width:130px">
-          <label>Расход (м)</label>
-          <input type="number" id="prod-mat-amount" placeholder="1.5" min="0" step="0.01">
-        </div>
-        <div class="field" style="flex:0; align-self:flex-end">
-          <button class="btn btn-ghost" onclick="addMatToProduct()">+ Добавить</button>
-        </div>
+
+      <div class="island">
+        <div class="island-title">Складской остаток</div>
+        <div id="island-mats-2"></div>
       </div>
-      <div id="prod-materials"></div>
-      <div class="form-row" style="margin-top:4px">
-        <button class="btn btn-primary" onclick="addProduct()">Создать изделие</button>
-      </div>
-      <div id="prod-error" class="err"></div>
     </div>
-    <div id="products-list" class="item-list"></div>
   </div>
 
-  <!-- Списания -->
-  <div id="tab-writeoffs" class="tab-pane">
-    <div class="form">
-      <div class="form-row">
-        <div class="field">
-          <label>Изделие</label>
-          <select id="wo-product" onchange="updateWoPreview()"></select>
-        </div>
-        <div class="field" style="max-width:150px">
-          <label>Количество (шт)</label>
-          <input type="number" id="wo-qty" placeholder="1" min="1" step="1" oninput="updateWoPreview()">
-        </div>
-      </div>
+  <!-- ═══ СПИСАНИЯ ══════════════════════════════════════════════════════ -->
+  <div id="tab-writeoffs" class="tab-pane" style="padding-top:28px">
+    <div class="form-block">
+      <div class="section-label" style="margin-bottom:16px">Списание изделий</div>
+      <div id="wo-items-list"></div>
+      <button class="btn btn-secondary btn-sm wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
       <div id="wo-preview"></div>
-      <div class="form-row" style="margin-top:12px">
+      <div class="form-actions">
         <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
       </div>
-      <div id="wo-error" class="err"></div>
-      <div id="wo-ok" class="ok"></div>
+      <div id="wo-err" class="err"></div>
+      <div id="wo-ok" class="ok-msg"></div>
     </div>
   </div>
 
-  <!-- Итог -->
-  <div id="tab-summary" class="tab-pane">
-    <div class="stats-grid" id="stats-grid"></div>
-    <div class="section">
-      <div class="section-title">По материалам</div>
-      <div id="breakdown"></div>
+  <!-- ═══ ИТОГ ══════════════════════════════════════════════════════════ -->
+  <div id="tab-summary" class="tab-pane" style="padding-top:28px">
+    <div class="stat-row" id="stat-row"></div>
+    <div class="chart-section">
+      <div class="chart-title">Списания за 7 дней</div>
+      <div class="chart-bars" id="chart-bars"></div>
     </div>
-    <div class="section">
-      <div class="section-title">История списаний</div>
-      <div id="history"></div>
-    </div>
+    <div id="history-by-day"></div>
   </div>
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────
+// ── Config ───────────────────────────────────────────────────────────────
 const PASSWORD  = '1488';
 const CLOUD_DB  = 'https://proxytherm-e2db4-default-rtdb.firebaseio.com';
 const STORE_KEY = 'sklad-v1';
-// ─────────────────────────────────────────────────────
 
+// ── State ────────────────────────────────────────────────────────────────
 let state = { materials: [], products: [], writeoffs: [] };
-let newProdMats = [];
+let newProdMats  = [];   // materials being added to a new product
+let editProdMats = [];   // materials in the product being edited
+let woItems      = [{ prodId: '', qty: 1 }]; // writeoff items
+let modalCallback = null;
 
 function normalizeState(s) {
   if (!s || typeof s !== 'object') return { materials: [], products: [], writeoffs: [] };
@@ -293,7 +402,27 @@ function normalizeState(s) {
   };
 }
 
-// Auth
+// ── Modal ────────────────────────────────────────────────────────────────
+function showModal(title, body, onConfirm, confirmLabel = 'Подтвердить', danger = false) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  const btn = document.getElementById('modal-confirm-btn');
+  btn.textContent = confirmLabel;
+  btn.className = 'btn ' + (danger ? 'btn-danger' : 'btn-primary');
+  btn.style.background = danger ? '' : '';
+  modalCallback = onConfirm;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function hideModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  modalCallback = null;
+}
+function confirmModal() {
+  hideModal();
+  if (modalCallback) modalCallback();
+}
+
+// ── Auth ─────────────────────────────────────────────────────────────────
 function doLogin() {
   const val = document.getElementById('auth-input').value;
   if (val === PASSWORD) {
@@ -302,24 +431,22 @@ function doLogin() {
     document.getElementById('auth-input').value = '';
     initApp();
   } else {
-    const el = document.getElementById('auth-error');
+    const el = document.getElementById('auth-err');
     el.textContent = 'Неверный пароль';
     document.getElementById('auth-input').value = '';
     setTimeout(() => el.textContent = '', 2000);
   }
 }
 
-// Tabs
+// ── Tabs ─────────────────────────────────────────────────────────────────
 function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    const names = ['materials','products','writeoffs','summary'];
-    b.classList.toggle('active', names[i] === name);
-  });
+  const names = ['sklad','products','writeoffs','summary'];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', names[i] === name));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
 }
 
-// Storage
+// ── Storage ───────────────────────────────────────────────────────────────
 function loadLocal() {
   try { const s = localStorage.getItem(STORE_KEY); if (s) state = normalizeState(JSON.parse(s)); } catch(e) {}
 }
@@ -332,135 +459,195 @@ async function loadCloud() {
     const data = await res.json();
     if (data && typeof data === 'object') { state = normalizeState(data); return 'loaded'; }
     return 'empty';
-  } catch(e) { return 'error'; }
+  } catch { return 'error'; }
 }
-
 async function saveCloud() {
   try {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state)
     });
     return res.ok;
-  } catch(e) { return false; }
+  } catch { return false; }
 }
 
-function setSyncStatus(t) { document.getElementById('sync-status').textContent = t; }
+function setSyncStatus(ok, text) {
+  document.getElementById('sync-dot').className = 'sync-dot' + (ok ? ' ok' : '');
+  document.getElementById('sync-text').textContent = text;
+}
 
 function save() {
   saveLocal();
-  saveCloud().then(ok => setSyncStatus(ok
-    ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
-    : 'Нет связи'));
+  saveCloud().then(ok => setSyncStatus(ok,
+    ok ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
+       : 'Нет связи'));
   renderAll();
 }
 
-// Helpers
+// ── Helpers ───────────────────────────────────────────────────────────────
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function matLabel(m) {
   if (!m) return 'удалён';
   return m.type === 'pipe' ? `Труба Ø${m.diameter}×${m.wall}` : `Профиль ${m.height}×${m.width}×${m.wall}`;
 }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// Material fields toggle
+// ── Material fields ───────────────────────────────────────────────────────
 function updateMatFields() {
   const t = document.getElementById('mat-type').value;
-  document.getElementById('f-diameter').style.display = t === 'pipe' ? '' : 'none';
-  document.getElementById('f-height').style.display = t === 'profile' ? '' : 'none';
-  document.getElementById('f-width').style.display = t === 'profile' ? '' : 'none';
+  document.getElementById('f-diam').style.display = t === 'pipe' ? '' : 'none';
+  document.getElementById('f-h').style.display = t === 'profile' ? '' : 'none';
+  document.getElementById('f-w').style.display = t === 'profile' ? '' : 'none';
 }
 
-// Materials CRUD
+// ── Materials CRUD ────────────────────────────────────────────────────────
 function addMaterial() {
   const type = document.getElementById('mat-type').value;
   const wall = parseFloat(document.getElementById('mat-wall').value);
   const stock = parseFloat(document.getElementById('mat-stock').value) || 0;
-  if (!wall || wall <= 0) { document.getElementById('mat-error').textContent = 'Укажите толщину стенки'; return; }
+  const errEl = document.getElementById('mat-err');
+  if (!wall || wall <= 0) { errEl.textContent = 'Укажите толщину стенки'; return; }
   const mat = { id: genId(), type, wall, stock };
   if (type === 'pipe') {
     const d = parseFloat(document.getElementById('mat-diameter').value);
-    if (!d || d <= 0) { document.getElementById('mat-error').textContent = 'Укажите диаметр'; return; }
+    if (!d || d <= 0) { errEl.textContent = 'Укажите диаметр'; return; }
     mat.diameter = d;
   } else {
     const h = parseFloat(document.getElementById('mat-height').value);
     const w = parseFloat(document.getElementById('mat-width').value);
-    if (!h || !w) { document.getElementById('mat-error').textContent = 'Укажите высоту и ширину'; return; }
+    if (!h || !w) { errEl.textContent = 'Укажите высоту и ширину'; return; }
     mat.height = h; mat.width = w;
   }
-  document.getElementById('mat-error').textContent = '';
+  errEl.textContent = '';
   state.materials.push(mat);
   save();
-  ['mat-diameter','mat-wall','mat-stock','mat-height','mat-width'].forEach(id => document.getElementById(id).value = '');
-}
-
-function adjustStock(id, delta) {
-  const m = state.materials.find(m => m.id === id);
-  if (!m) return;
-  const amt = parseFloat(document.getElementById('si-' + id).value) || 0;
-  if (amt <= 0) return;
-  m.stock = Math.max(0, Math.round((m.stock + delta * amt) * 1000) / 1000);
-  save();
-}
-
-function deleteMaterial(id) {
-  state.materials = state.materials.filter(m => m.id !== id);
-  save();
+  ['mat-diameter','mat-wall','mat-stock','mat-height','mat-width'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
 }
 
 function renderMaterials() {
   const el = document.getElementById('materials-list');
   if (!state.materials.length) { el.innerHTML = '<div class="empty">Нет материалов — добавьте первый</div>'; return; }
   el.innerHTML = state.materials.map(m => `
-    <div class="mat-item">
-      <div class="mat-name">
-        <span class="mat-tag ${m.type === 'pipe' ? 'tag-pipe' : 'tag-profile'}">${m.type === 'pipe' ? 'Труба' : 'Профиль'}</span>
-        ${matLabel(m)}
+    <div class="mat-card" id="mc-${m.id}">
+      <div class="mat-card-top">
+        <div class="mat-card-info">
+          <div style="margin-bottom:4px"><span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}">${m.type==='pipe'?'Труба':'Профиль'}</span></div>
+          <div class="mat-card-name">${esc(matLabel(m))}</div>
+          <div style="margin-top:6px">
+            <span class="mat-card-stock">${m.stock.toFixed(2)}</span>
+            <span class="mat-card-unit">м</span>
+          </div>
+        </div>
+        <div class="mat-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="startEditMat('${m.id}')">Изменить</button>
+          <button class="btn btn-danger btn-sm" onclick="askDeleteMat('${m.id}')">Удалить</button>
+        </div>
       </div>
-      <div class="stock-row">
-        <button class="stock-btn" onclick="adjustStock('${m.id}',-1)">−</button>
-        <input class="stock-input" id="si-${m.id}" type="number" value="1" min="0.01" step="0.01">
-        <button class="stock-btn" onclick="adjustStock('${m.id}',1)">+</button>
-        <div class="stock-val">${m.stock.toFixed(2)} м</div>
-        <button class="btn btn-danger" onclick="deleteMaterial('${m.id}')">✕</button>
+      <div class="mat-edit-row" id="me-${m.id}" style="display:none">
+        <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Остаток (м)" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
+        <button class="btn btn-primary btn-sm" onclick="askSaveMat('${m.id}')">Сохранить</button>
+        <button class="btn btn-ghost btn-sm" onclick="cancelEditMat('${m.id}')">Отмена</button>
       </div>
     </div>
   `).join('');
 }
 
-// Products CRUD
-function renderProdMatSelect() {
-  const sel = document.getElementById('prod-mat-select');
+function startEditMat(id) {
+  document.getElementById('me-' + id).style.display = 'flex';
+  const inp = document.getElementById('mei-' + id);
+  inp.focus(); inp.select();
+}
+function cancelEditMat(id) { document.getElementById('me-' + id).style.display = 'none'; }
+
+function askSaveMat(id) {
+  const val = parseFloat(document.getElementById('mei-' + id).value);
+  if (isNaN(val) || val < 0) return;
+  showModal('Изменить остаток', `Установить остаток: <b>${val.toFixed(2)} м</b>?`, () => {
+    const m = state.materials.find(m => m.id === id);
+    if (m) { m.stock = val; save(); }
+  }, 'Сохранить');
+}
+
+function askDeleteMat(id) {
+  const m = state.materials.find(m => m.id === id);
+  showModal('Удалить материал', `Удалить <b>${esc(matLabel(m))}</b>? Это действие нельзя отменить.`, () => {
+    state.materials = state.materials.filter(m => m.id !== id);
+    save();
+  }, 'Удалить', true);
+}
+
+// ── Island infographic ─────────────────────────────────────────────────────
+const ISLAND_COLORS = ['#4A90D9','#5CB85C','#E67E22','#9B59B6','#1ABC9C','#E74C3C','#3498DB','#F39C12'];
+
+function renderIsland(elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!state.materials.length) { el.innerHTML = '<div class="island-empty">Нет материалов</div>'; return; }
+  const maxStock = Math.max(...state.materials.map(m => m.stock), 0.001);
+  const totalMeters = state.materials.reduce((s, m) => s + m.stock, 0);
+  el.innerHTML = state.materials.map((m, i) => {
+    const pct = Math.round(m.stock / maxStock * 100);
+    const color = ISLAND_COLORS[i % ISLAND_COLORS.length];
+    return `
+      <div class="island-row">
+        <div class="island-mat-name">
+          <span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}" style="font-size:9px">${m.type==='pipe'?'Т':'П'}</span>
+          ${esc(matLabel(m))}
+        </div>
+        <div class="island-bar-wrap">
+          <div class="island-bar" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <div class="island-meta">
+          <span>${pct}%</span>
+          <span class="island-stock-val">${m.stock.toFixed(2)} м</span>
+        </div>
+      </div>`;
+  }).join('') + `
+    <hr class="island-divider">
+    <div class="island-total"><span>Итого</span><span style="font-weight:600">${totalMeters.toFixed(2)} м</span></div>`;
+}
+
+// ── Products CRUD ─────────────────────────────────────────────────────────
+function renderProdMatSelect(selId) {
+  const sel = document.getElementById(selId);
+  if (!sel) return;
   sel.innerHTML = state.materials.length
-    ? state.materials.map(m => `<option value="${m.id}">${matLabel(m)}</option>`).join('')
+    ? state.materials.map(m => `<option value="${m.id}">${esc(matLabel(m))}</option>`).join('')
     : '<option value="">— сначала добавьте материалы —</option>';
 }
 
 function addMatToProduct() {
   const matId = document.getElementById('prod-mat-select').value;
-  const amount = parseFloat(document.getElementById('prod-mat-amount').value);
-  if (!matId || !amount || amount <= 0) return;
+  const qty = parseFloat(document.getElementById('prod-mat-qty').value);
+  if (!matId || !qty || qty <= 0) return;
   const i = newProdMats.findIndex(x => x.matId === matId);
-  if (i >= 0) newProdMats[i].amount = amount; else newProdMats.push({ matId, amount });
-  document.getElementById('prod-mat-amount').value = '';
+  if (i >= 0) newProdMats[i].qty = qty; else newProdMats.push({ matId, qty });
+  document.getElementById('prod-mat-qty').value = '';
   renderNewProdMats();
 }
 
-function removeMatFromProduct(matId) {
+function removeNewProdMat(matId) {
   newProdMats = newProdMats.filter(x => x.matId !== matId);
   renderNewProdMats();
 }
 
 function renderNewProdMats() {
-  document.getElementById('prod-materials').innerHTML = newProdMats.map(x => {
+  document.getElementById('prod-mats-list').innerHTML = newProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
-    return `<div class="added-mat"><span>${matLabel(m)} — ${x.amount} м</span><button class="btn btn-danger" onclick="removeMatFromProduct('${x.matId}')">✕</button></div>`;
+    return `<div class="added-mat">
+      <span>${esc(matLabel(m))} — <b>${x.qty} м</b></span>
+      <button class="btn btn-danger btn-sm" onclick="removeNewProdMat('${x.matId}')">✕</button>
+    </div>`;
   }).join('');
 }
 
 function addProduct() {
   const name = document.getElementById('prod-name').value.trim();
-  if (!name) { document.getElementById('prod-error').textContent = 'Укажите название'; return; }
-  if (!newProdMats.length) { document.getElementById('prod-error').textContent = 'Добавьте хотя бы один материал'; return; }
-  document.getElementById('prod-error').textContent = '';
+  const errEl = document.getElementById('prod-err');
+  if (!name) { errEl.textContent = 'Укажите название'; return; }
+  if (!newProdMats.length) { errEl.textContent = 'Добавьте хотя бы один материал'; return; }
+  errEl.textContent = '';
   state.products.push({ id: genId(), name, materials: [...newProdMats] });
   newProdMats = [];
   document.getElementById('prod-name').value = '';
@@ -468,132 +655,307 @@ function addProduct() {
   save();
 }
 
-function deleteProduct(id) {
-  state.products = state.products.filter(p => p.id !== id);
-  save();
-}
-
 function renderProducts() {
   const el = document.getElementById('products-list');
   if (!state.products.length) { el.innerHTML = '<div class="empty">Нет изделий — создайте первое</div>'; return; }
   el.innerHTML = state.products.map(p => `
-    <div class="prod-item">
-      <div class="prod-header">
-        <div class="prod-name">${p.name}</div>
-        <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">✕</button>
+    <div class="prod-card">
+      <div class="prod-card-top">
+        <div class="prod-card-name">${esc(p.name)}</div>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="startEditProduct('${p.id}')">Редактировать</button>
+          <button class="btn btn-danger btn-sm" onclick="askDeleteProduct('${p.id}')">Удалить</button>
+        </div>
       </div>
-      <div class="prod-body">
+      <div class="prod-card-body">
         ${p.materials.map(x => {
           const m = state.materials.find(m => m.id === x.matId);
-          return `<div class="comp-row"><span>${matLabel(m)}</span><span>${x.amount} м</span></div>`;
+          return `<div class="comp-row"><span>${esc(matLabel(m))}</span><span class="comp-val">${x.qty} м</span></div>`;
         }).join('')}
       </div>
     </div>
   `).join('');
 }
 
-// Writeoffs
-function renderWoSelect() {
-  const sel = document.getElementById('wo-product');
-  sel.innerHTML = state.products.length
-    ? state.products.map(p => `<option value="${p.id}">${p.name}</option>`).join('')
-    : '<option value="">— сначала создайте изделие —</option>';
-  updateWoPreview();
+function askDeleteProduct(id) {
+  const p = state.products.find(p => p.id === id);
+  showModal('Удалить изделие', `Удалить <b>${esc(p.name)}</b>? Это действие нельзя отменить.`, () => {
+    state.products = state.products.filter(p => p.id !== id);
+    save();
+  }, 'Удалить', true);
 }
 
-function updateWoPreview() {
-  const prodId = document.getElementById('wo-product').value;
-  const qty = parseFloat(document.getElementById('wo-qty').value) || 1;
-  const el = document.getElementById('wo-preview');
-  const p = state.products.find(p => p.id === prodId);
-  if (!p) { el.innerHTML = ''; return; }
-  const rows = p.materials.map(x => {
+function startEditProduct(id) {
+  const p = state.products.find(p => p.id === id);
+  if (!p) return;
+  editProdMats = p.materials.map(x => ({ ...x }));
+  const matOptions = state.materials.map(m => `<option value="${m.id}">${esc(matLabel(m))}</option>`).join('');
+  const matsHtml = () => editProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
-    const total = x.amount * qty;
-    const ok = m && m.stock >= total;
-    return `<div class="preview-row"><span>${matLabel(m)}</span><span class="${ok ? '' : 'not-enough'}">${total.toFixed(2)} м${!ok ? ' — недостаточно' : ''}</span></div>`;
+    return `<div class="added-mat" id="epm-${x.matId}">
+      <span>${esc(matLabel(m))} — <b>${x.qty} м</b></span>
+      <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
+    </div>`;
   }).join('');
-  el.innerHTML = `<div class="preview-box"><div class="preview-title">Состав на ${qty} шт.</div>${rows}</div>`;
-}
 
-function doWriteoff() {
-  const prodId = document.getElementById('wo-product').value;
-  const qty = parseFloat(document.getElementById('wo-qty').value);
-  const errEl = document.getElementById('wo-error');
-  const okEl = document.getElementById('wo-ok');
-  errEl.textContent = ''; okEl.textContent = '';
-  if (!prodId) { errEl.textContent = 'Выберите изделие'; return; }
-  if (!qty || qty <= 0) { errEl.textContent = 'Укажите количество'; return; }
-  const p = state.products.find(p => p.id === prodId);
-  for (const x of p.materials) {
-    const m = state.materials.find(m => m.id === x.matId);
-    if (!m || m.stock < x.amount * qty) { errEl.textContent = `Недостаточно: ${matLabel(m)}`; return; }
-  }
-  const items = p.materials.map(x => {
-    const m = state.materials.find(m => m.id === x.matId);
-    const meters = Math.round(x.amount * qty * 1000) / 1000;
-    m.stock = Math.round((m.stock - meters) * 1000) / 1000;
-    return { materialId: m.id, materialName: matLabel(m), meters };
-  });
-  state.writeoffs.push({ id: genId(), productId: p.id, productName: p.name, quantity: qty, timestamp: Date.now(), items });
-  document.getElementById('wo-qty').value = '';
-  okEl.textContent = `Списано: ${p.name} × ${qty} шт.`;
-  setTimeout(() => okEl.textContent = '', 3000);
-  save();
-}
-
-// Summary
-function renderSummary() {
-  const total = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
-  const meters = state.writeoffs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Списано изделий</div><div class="stat-value">${total}</div></div>
-    <div class="stat-card"><div class="stat-label">Материалов (м)</div><div class="stat-value">${meters.toFixed(2)}</div></div>
-    <div class="stat-card"><div class="stat-label">Операций</div><div class="stat-value">${state.writeoffs.length}</div></div>
+  const bodyHtml = `
+    <label style="display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Название</label>
+    <input id="edit-prod-name" value="${esc(p.name)}" placeholder="Название изделия">
+    <div style="margin-top:14px;margin-bottom:6px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Состав</div>
+    <div id="edit-prod-mats">${matsHtml()}</div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <select id="edit-mat-sel" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:13px">${matOptions}</select>
+      <input type="number" id="edit-mat-qty" placeholder="м" min="0" step="0.01" style="width:80px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:13px">
+      <button class="btn btn-secondary btn-sm" onclick="addEditProdMat()">+</button>
+    </div>
   `;
-  const bd = {};
-  for (const w of state.writeoffs) for (const i of w.items) bd[i.materialName] = (bd[i.materialName] || 0) + i.meters;
-  const bdEl = document.getElementById('breakdown');
-  bdEl.innerHTML = !Object.keys(bd).length
-    ? '<div class="empty">Списаний пока нет</div>'
-    : `<table class="bd-table"><thead><tr><th>Материал</th><th>Списано (м)</th></tr></thead><tbody>
-        ${Object.entries(bd).map(([n,m]) => `<tr><td>${n}</td><td>${m.toFixed(2)}</td></tr>`).join('')}
-       </tbody></table>`;
-  const hEl = document.getElementById('history');
-  if (!state.writeoffs.length) { hEl.innerHTML = '<div class="empty">История пуста</div>'; return; }
-  hEl.innerHTML = [...state.writeoffs].reverse().map(w => {
-    const date = new Date(w.timestamp).toLocaleString('ru', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-    return `<div class="hist-item">
-      <div class="hist-top"><span class="hist-name">${w.productName} — ${w.quantity} шт.</span><span class="hist-date">${date}</span></div>
-      <div class="hist-detail">${w.items.map(i => `${i.materialName}: ${i.meters.toFixed(2)} м`).join(' · ')}</div>
+
+  showModal('Редактировать изделие', bodyHtml, () => {
+    const newName = document.getElementById('edit-prod-name')?.value.trim();
+    if (!newName) return;
+    const idx = state.products.findIndex(p => p.id === id);
+    if (idx >= 0) { state.products[idx].name = newName; state.products[idx].materials = [...editProdMats]; }
+    save();
+  }, 'Сохранить');
+}
+
+function refreshEditProdMats() {
+  const el = document.getElementById('edit-prod-mats');
+  if (!el) return;
+  el.innerHTML = editProdMats.map(x => {
+    const m = state.materials.find(m => m.id === x.matId);
+    return `<div class="added-mat">
+      <span>${esc(matLabel(m))} — <b>${x.qty} м</b></span>
+      <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
 }
 
-function renderAll() {
-  renderMaterials();
-  renderProdMatSelect();
-  renderProducts();
-  renderWoSelect();
-  renderSummary();  // всегда обновляем итог
+function addEditProdMat() {
+  const matId = document.getElementById('edit-mat-sel')?.value;
+  const qty = parseFloat(document.getElementById('edit-mat-qty')?.value);
+  if (!matId || !qty || qty <= 0) return;
+  const i = editProdMats.findIndex(x => x.matId === matId);
+  if (i >= 0) editProdMats[i].qty = qty; else editProdMats.push({ matId, qty });
+  document.getElementById('edit-mat-qty').value = '';
+  refreshEditProdMats();
 }
 
-// Init
+function removeEditProdMat(matId) {
+  editProdMats = editProdMats.filter(x => x.matId !== matId);
+  refreshEditProdMats();
+}
+
+// ── Writeoffs ─────────────────────────────────────────────────────────────
+function renderWoItems() {
+  const el = document.getElementById('wo-items-list');
+  if (!state.products.length) {
+    el.innerHTML = '<div class="empty" style="margin-bottom:12px">Сначала создайте изделия</div>';
+    return;
+  }
+  const options = state.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  el.innerHTML = woItems.map((item, i) => `
+    <div class="wo-item-row">
+      <div class="field">
+        <label>Изделие</label>
+        <select onchange="woItems[${i}].prodId=this.value;updateWoPreview()">
+          <option value="">— выберите —</option>
+          ${state.products.map(p => `<option value="${p.id}" ${item.prodId===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field narrow">
+        <label>Кол-во (шт)</label>
+        <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="1"
+          oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
+      </div>
+      ${woItems.length > 1 ? `<div style="padding-bottom:2px"><button class="btn btn-danger btn-sm" onclick="removeWoItem(${i})">✕</button></div>` : ''}
+    </div>
+  `).join('');
+  updateWoPreview();
+}
+
+function addWoItem() { woItems.push({ prodId: '', qty: 1 }); renderWoItems(); }
+function removeWoItem(i) { woItems.splice(i, 1); renderWoItems(); }
+
+function updateWoPreview() {
+  const el = document.getElementById('wo-preview');
+  const validItems = woItems.filter(x => x.prodId && x.qty > 0);
+  if (!validItems.length) { el.innerHTML = ''; return; }
+
+  // Aggregate material needs
+  const needs = {};
+  let allOk = true;
+  for (const item of validItems) {
+    const p = state.products.find(p => p.id === item.prodId);
+    if (!p) continue;
+    for (const x of p.materials) {
+      if (!needs[x.matId]) needs[x.matId] = 0;
+      needs[x.matId] += x.qty * item.qty;
+    }
+  }
+
+  const rows = validItems.map(item => {
+    const p = state.products.find(p => p.id === item.prodId);
+    if (!p) return '';
+    const matRows = p.materials.map(x => {
+      const m = state.materials.find(m => m.id === x.matId);
+      const total = x.qty * item.qty;
+      const ok = m && m.stock >= needs[x.matId];
+      if (!ok) allOk = false;
+      return `<div class="wo-preview-mat ${ok?'':'not-enough'}">${esc(matLabel(m))}: ${total.toFixed(2)} м${ok?'':' — недостаточно'}</div>`;
+    }).join('');
+    return `<div class="wo-preview-item"><b>${esc(p.name)} × ${item.qty} шт.</b></div>${matRows}`;
+  }).join('');
+
+  el.innerHTML = `<div class="wo-preview"><div class="wo-preview-title">Предварительный расчёт</div>${rows}</div>`;
+}
+
+function doWriteoff() {
+  const errEl = document.getElementById('wo-err');
+  const okEl = document.getElementById('wo-ok');
+  errEl.textContent = ''; okEl.textContent = '';
+
+  const validItems = woItems.filter(x => x.prodId && x.qty > 0);
+  if (!validItems.length) { errEl.textContent = 'Добавьте хотя бы одно изделие'; return; }
+
+  // Check all stocks
+  const needs = {};
+  for (const item of validItems) {
+    const p = state.products.find(p => p.id === item.prodId);
+    if (!p) continue;
+    for (const x of p.materials) {
+      if (!needs[x.matId]) needs[x.matId] = 0;
+      needs[x.matId] += x.qty * item.qty;
+    }
+  }
+  for (const [matId, total] of Object.entries(needs)) {
+    const m = state.materials.find(m => m.id === matId);
+    if (!m || m.stock < total) { errEl.textContent = `Недостаточно материала: ${matLabel(m)}`; return; }
+  }
+
+  // Deduct
+  for (const [matId, total] of Object.entries(needs)) {
+    const m = state.materials.find(m => m.id === matId);
+    m.stock = Math.round((m.stock - total) * 1000) / 1000;
+  }
+
+  // Record writeoffs
+  for (const item of validItems) {
+    const p = state.products.find(p => p.id === item.prodId);
+    const items = p.materials.map(x => {
+      const m = state.materials.find(m => m.id === x.matId);
+      return { materialId: x.matId, materialName: matLabel(m), meters: Math.round(x.qty * item.qty * 1000) / 1000 };
+    });
+    state.writeoffs.push({ id: genId(), productId: p.id, productName: p.name, quantity: item.qty, timestamp: Date.now(), items });
+  }
+
+  const names = validItems.map(x => {
+    const p = state.products.find(p => p.id === x.prodId);
+    return `${p?.name} × ${x.qty}`;
+  }).join(', ');
+  woItems = [{ prodId: '', qty: 1 }];
+  save();
+  okEl.textContent = `Списано: ${names}`;
+  setTimeout(() => okEl.textContent = '', 4000);
+}
+
+// ── Summary ────────────────────────────────────────────────────────────────
+function renderSummary() {
+  const total = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
+  const totalM = state.writeoffs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
+  document.getElementById('stat-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Списано изделий</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Материалов (м)</div><div class="stat-val">${totalM.toFixed(1)}</div></div>
+    <div class="stat-card"><div class="stat-label">Операций</div><div class="stat-val">${state.writeoffs.length}</div></div>
+    <div class="stat-card"><div class="stat-label">На складе (м)</div><div class="stat-val">${state.materials.reduce((s,m)=>s+m.stock,0).toFixed(1)}</div></div>
+  `;
+
+  // Chart: last 7 days
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0,0,0,0);
+    days.push({ date: d, count: 0, label: i === 0 ? 'Сег' : i === 1 ? 'Вч' : d.toLocaleDateString('ru',{weekday:'short'}) });
+  }
+  state.writeoffs.forEach(w => {
+    const d = new Date(w.timestamp); d.setHours(0,0,0,0);
+    const day = days.find(dd => dd.date.getTime() === d.getTime());
+    if (day) day.count += w.quantity;
+  });
+  const maxCount = Math.max(...days.map(d => d.count), 1);
+  document.getElementById('chart-bars').innerHTML = days.map(d => `
+    <div class="chart-col">
+      <div class="chart-day-val">${d.count > 0 ? d.count : ''}</div>
+      <div class="chart-bar-fill ${d.count>0?'has-data':''}" style="height:${Math.max(d.count/maxCount*60,d.count>0?4:2)}px"></div>
+      <div class="chart-day-label">${d.label}</div>
+    </div>
+  `).join('');
+
+  // History by day
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yest = new Date(today - 86400000);
+  const groups = {};
+  const groupOrder = [];
+  [...state.writeoffs].reverse().forEach(w => {
+    const d = new Date(w.timestamp); d.setHours(0,0,0,0);
+    let key;
+    if (d.getTime() === today.getTime()) key = 'Сегодня';
+    else if (d.getTime() === yest.getTime()) key = 'Вчера';
+    else key = d.toLocaleDateString('ru', { day:'2-digit', month:'long', year:'numeric' });
+    if (!groups[key]) { groups[key] = []; groupOrder.push(key); }
+    groups[key].push(w);
+  });
+
+  if (!groupOrder.length) {
+    document.getElementById('history-by-day').innerHTML = '<div class="empty">История пуста</div>';
+    return;
+  }
+
+  document.getElementById('history-by-day').innerHTML = groupOrder.map(key => `
+    <div class="day-group">
+      <div class="day-label">${key}</div>
+      ${groups[key].map(w => {
+        const time = new Date(w.timestamp).toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' });
+        const chips = w.items.map(i => `<span class="wo-mat-chip">${esc(i.materialName)}: ${i.meters.toFixed(2)} м</span>`).join('');
+        return `<div class="wo-entry">
+          <div class="wo-entry-top">
+            <div class="wo-entry-name">${esc(w.productName)}</div>
+            <div class="wo-entry-time">${time}</div>
+          </div>
+          <div class="wo-entry-qty">${w.quantity} шт.</div>
+          <div class="wo-entry-mats">${chips}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+// ── Render all ────────────────────────────────────────────────────────────
+function renderAll() {
+  renderMaterials();
+  renderProdMatSelect('prod-mat-select');
+  renderProducts();
+  renderWoItems();
+  renderIsland('island-mats-1');
+  renderIsland('island-mats-2');
+  renderSummary();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
 async function initApp() {
   loadLocal();
-  renderAll();
   updateMatFields();
-  setSyncStatus('Синхронизация...');
+  renderAll();
+  setSyncStatus(false, 'Синхронизация...');
   const result = await loadCloud();
   if (result === 'loaded') {
-    saveLocal(); renderAll(); setSyncStatus('Синхронизировано');
+    saveLocal(); renderAll(); setSyncStatus(true, 'Синхронизировано');
   } else if (result === 'empty') {
-    saveCloud().then(() => setSyncStatus('Синхронизировано'));
+    saveCloud().then(() => setSyncStatus(true, 'Синхронизировано'));
   } else {
-    setSyncStatus('Облако недоступно');
+    setSyncStatus(false, 'Нет связи');
   }
   setInterval(async () => {
-    if (await loadCloud() === 'loaded') { saveLocal(); renderAll(); setSyncStatus('Синхронизировано'); }
+    if (await loadCloud() === 'loaded') { saveLocal(); renderAll(); setSyncStatus(true, 'Синхронизировано'); }
   }, 60000);
 }
 
