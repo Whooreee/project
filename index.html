@@ -30,6 +30,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: var(--font); font-size: 14px; line-height: 1.5; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
     input, select, button, textarea { font-family: var(--font); }
+    ::placeholder { color: var(--text3); opacity: 1; }
 
     /* ── Auth ──────────────────────────────────── */
     .auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 200; }
@@ -76,8 +77,8 @@
     .island { position: sticky; top: 24px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; }
     .island-title { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; }
     .island-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 12px 0; }
-    .island-row { margin-bottom: 16px; }
-    .island-row:last-child { margin-bottom: 0; }
+    .island-row { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .island-row:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
     .island-mat-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
     .island-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 3px; }
     .island-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
@@ -99,7 +100,7 @@
     .field label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
     .field input, .field select { padding: 8px 11px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); color: var(--text); outline: none; transition: border-color 0.13s, box-shadow 0.13s; }
     .field input:focus, .field select:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
-    .form-actions { display: flex; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); margin-top: 4px; flex-wrap: wrap; }
+    .form-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 12px; flex-wrap: wrap; }
 
     /* ── Buttons ───────────────────────────────── */
     .btn { font-size: 13px; font-weight: 500; padding: 8px 16px; border-radius: var(--r); border: 1px solid transparent; cursor: pointer; transition: all 0.12s; line-height: 1.4; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
@@ -119,16 +120,16 @@
     .badge-profile { background: #E8F7EE; color: #1E7A3C; }
 
     /* ── Material cards ────────────────────────── */
-    .mat-list { display: flex; flex-direction: column; gap: 8px; }
+    .mat-list { display: flex; flex-direction: column; gap: 10px; }
     .mat-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; transition: border-color 0.13s; }
     .mat-card:hover { border-color: var(--border-h); }
-    .mat-card-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+    .mat-card-top { display: flex; align-items: center; gap: 12px; padding: 16px 18px; }
     .mat-card-info { flex: 1; min-width: 0; }
     .mat-card-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
     .mat-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
     .mat-card-stock { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
     .mat-card-unit { font-size: 12px; color: var(--text3); font-weight: 400; margin-left: 2px; }
-    .mat-edit-row { display: flex; align-items: center; gap: 8px; padding: 0 16px 14px; }
+    .mat-edit-row { display: flex; align-items: center; gap: 8px; padding: 0 18px 16px; }
     .mat-edit-row input { flex: 1; padding: 8px 11px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--r); outline: none; }
     .mat-edit-row input:focus { border-color: var(--border-h); }
 
@@ -142,6 +143,12 @@
     .comp-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text2); padding: 3px 0; }
     .comp-val { font-weight: 500; color: var(--text); }
     .added-mat { display: flex; justify-content: space-between; align-items: center; padding: 7px 11px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 6px; font-size: 13px; color: var(--text2); }
+
+    /* ── Input wrap with icons ─────────────────── */
+    .input-wrap { position: relative; display: flex; align-items: center; }
+    .input-wrap .ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; line-height: 1; }
+    .input-wrap input, .input-wrap select { padding-left: 32px; width: 100%; }
+    select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23B0ABA6' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
 
     /* ── Writeoff form ─────────────────────────── */
     .wo-item-row { display: flex; align-items: flex-end; gap: 10px; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); margin-bottom: 8px; flex-wrap: wrap; }
@@ -167,23 +174,24 @@
     .chart-bar-fill.has-data { opacity: 0.85; background: var(--black); }
     .chart-day-label { font-size: 10px; color: var(--text3); text-align: center; }
     .chart-day-val { font-size: 11px; font-weight: 600; color: var(--text2); }
-    .day-group { margin-bottom: 28px; }
-    .day-label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .wo-entry { padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .wo-entry:last-child { border-bottom: none; }
-    .wo-entry-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
-    .wo-entry-name { font-size: 14px; font-weight: 600; }
-    .wo-entry-time { font-size: 11px; color: var(--text3); }
-    .wo-entry-qty { font-size: 13px; color: var(--text2); margin-bottom: 6px; }
-    .wo-entry-mats { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* ── Day navigation ────────────────────────── */
+    .day-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .day-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .day-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 2px solid var(--border); }
+    .day-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+    .day-table tbody tr:last-child td { border-bottom: none; }
+    .day-table td:first-child { color: var(--text3); white-space: nowrap; }
+
+    /* ── Writeoff chips ────────────────────────── */
     .wo-mat-chip { font-size: 11px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--text2); }
 
     /* ── Empty state ───────────────────────────── */
     .empty { padding: 28px 20px; text-align: center; color: var(--text3); font-size: 13px; border: 1px dashed var(--border); border-radius: var(--r-lg); }
 
     /* ── Error / OK ────────────────────────────── */
-    .err { font-size: 12px; color: var(--danger); margin-top: 8px; min-height: 16px; }
-    .ok-msg { font-size: 12px; color: var(--success); margin-top: 8px; min-height: 16px; }
+    .err { font-size: 12px; color: var(--danger); margin-top: 0; min-height: 0; width: 100%; }
+    .ok-msg { font-size: 12px; color: var(--success); margin-top: 0; min-height: 0; width: 100%; }
 
     /* ── Responsive ────────────────────────────── */
     @media (max-width: 800px) {
@@ -258,36 +266,54 @@
           <div class="form-grid">
             <div class="field narrow">
               <label>Тип</label>
-              <select id="mat-type" onchange="updateMatFields()">
-                <option value="pipe">Труба</option>
-                <option value="profile">Профиль</option>
-              </select>
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
+                <select id="mat-type" onchange="updateMatFields()">
+                  <option value="pipe">Труба</option>
+                  <option value="profile">Профиль</option>
+                </select>
+              </div>
             </div>
             <div class="field" id="f-diam">
               <label>Диаметр (мм)</label>
-              <input type="number" id="mat-diameter" placeholder="57" min="0">
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <input type="number" id="mat-diameter" placeholder="Введите диаметр" min="0">
+              </div>
             </div>
             <div class="field" id="f-h" style="display:none">
               <label>Высота (мм)</label>
-              <input type="number" id="mat-height" placeholder="60" min="0">
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <input type="number" id="mat-height" placeholder="Введите высоту" min="0">
+              </div>
             </div>
             <div class="field" id="f-w" style="display:none">
               <label>Ширина (мм)</label>
-              <input type="number" id="mat-width" placeholder="40" min="0">
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <input type="number" id="mat-width" placeholder="Введите ширину" min="0">
+              </div>
             </div>
             <div class="field narrow">
               <label>Стенка (мм)</label>
-              <input type="number" id="mat-wall" placeholder="3.5" min="0" step="0.1">
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <input type="number" id="mat-wall" placeholder="Введите толщину" min="0" step="0.1">
+              </div>
             </div>
             <div class="field narrow">
               <label>Остаток (м)</label>
-              <input type="number" id="mat-stock" placeholder="0" min="0" step="0.01">
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                <input type="number" id="mat-stock" placeholder="Введите остаток" min="0" step="0.01">
+              </div>
             </div>
           </div>
           <div class="form-actions">
             <button class="btn btn-primary" onclick="addMaterial()">+ Добавить материал</button>
+            <div id="mat-err" class="err"></div>
           </div>
-          <div id="mat-err" class="err"></div>
         </div>
 
         <div class="section">
@@ -315,17 +341,26 @@
           <div class="form-grid">
             <div class="field" style="min-width:200px">
               <label>Название</label>
-              <input type="text" id="prod-name" placeholder="Например: Рама 2м">
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg></span>
+                <input type="text" id="prod-name" placeholder="Введите название">
+              </div>
             </div>
           </div>
           <div class="form-grid" id="prod-mat-form-row" style="align-items:flex-end">
             <div class="field">
               <label>Материал</label>
-              <select id="prod-mat-select"></select>
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+                <select id="prod-mat-select"></select>
+              </div>
             </div>
             <div class="field narrow">
-              <label>Кол-во (м)</label>
-              <input type="number" id="prod-mat-qty" placeholder="1" min="0" step="0.01">
+              <label>Расход (м)</label>
+              <div class="input-wrap">
+                <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span>
+                <input type="number" id="prod-mat-qty" placeholder="Введите расход" min="0" step="0.01">
+              </div>
             </div>
             <div class="field" style="flex:0;min-width:auto;justify-content:flex-end">
               <label style="visibility:hidden">add</label>
@@ -335,8 +370,8 @@
           <div id="prod-mats-list"></div>
           <div class="form-actions">
             <button class="btn btn-primary" onclick="addProduct()">Создать изделие</button>
+            <div id="prod-err" class="err"></div>
           </div>
-          <div id="prod-err" class="err"></div>
         </div>
 
         <div class="section">
@@ -363,9 +398,9 @@
       <div id="wo-preview"></div>
       <div class="form-actions">
         <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
+        <div id="wo-err" class="err"></div>
+        <div id="wo-ok" class="ok-msg"></div>
       </div>
-      <div id="wo-err" class="err"></div>
-      <div id="wo-ok" class="ok-msg"></div>
     </div>
   </div>
 
@@ -376,7 +411,12 @@
       <div class="chart-title">Списания за 7 дней</div>
       <div class="chart-bars" id="chart-bars"></div>
     </div>
-    <div id="history-by-day"></div>
+    <div class="day-nav">
+      <button class="btn btn-secondary btn-sm" onclick="prevSummaryDay()">&#8249; Назад</button>
+      <span id="day-nav-label" style="font-size:13px;font-weight:500;min-width:120px;text-align:center"></span>
+      <button class="btn btn-secondary btn-sm" id="day-nav-next" onclick="nextSummaryDay()">Вперёд &#8250;</button>
+    </div>
+    <div id="day-table-wrap" style="margin-top:16px"></div>
   </div>
 </div>
 
@@ -392,6 +432,8 @@ let newProdMats  = [];   // materials being added to a new product
 let editProdMats = [];   // materials in the product being edited
 let woItems      = [{ prodId: '', qty: 1 }]; // writeoff items
 let modalCallback = null;
+
+let summaryDay = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
 
 function normalizeState(s) {
   if (!s || typeof s !== 'object') return { materials: [], products: [], writeoffs: [] };
@@ -545,7 +587,7 @@ function renderMaterials() {
         </div>
       </div>
       <div class="mat-edit-row" id="me-${m.id}" style="display:none">
-        <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Остаток (м)" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
+        <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Введите остаток" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
         <button class="btn btn-primary btn-sm" onclick="askSaveMat('${m.id}')">Сохранить</button>
         <button class="btn btn-ghost btn-sm" onclick="cancelEditMat('${m.id}')">Отмена</button>
       </div>
@@ -636,7 +678,7 @@ function renderNewProdMats() {
   document.getElementById('prod-mats-list').innerHTML = newProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
     return `<div class="added-mat">
-      <span>${esc(matLabel(m))} — <b>${x.qty} м</b></span>
+      <span>${esc(matLabel(m))} — расход: <b>${x.qty} м</b></span>
       <button class="btn btn-danger btn-sm" onclick="removeNewProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
@@ -670,7 +712,7 @@ function renderProducts() {
       <div class="prod-card-body">
         ${p.materials.map(x => {
           const m = state.materials.find(m => m.id === x.matId);
-          return `<div class="comp-row"><span>${esc(matLabel(m))}</span><span class="comp-val">${x.qty} м</span></div>`;
+          return `<div class="comp-row"><span>${esc(matLabel(m))}</span><span class="comp-val">расход: ${x.qty} м</span></div>`;
         }).join('')}
       </div>
     </div>
@@ -693,7 +735,7 @@ function startEditProduct(id) {
   const matsHtml = () => editProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
     return `<div class="added-mat" id="epm-${x.matId}">
-      <span>${esc(matLabel(m))} — <b>${x.qty} м</b></span>
+      <span>${esc(matLabel(m))} — расход: <b>${x.qty} м</b></span>
       <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
@@ -725,7 +767,7 @@ function refreshEditProdMats() {
   el.innerHTML = editProdMats.map(x => {
     const m = state.materials.find(m => m.id === x.matId);
     return `<div class="added-mat">
-      <span>${esc(matLabel(m))} — <b>${x.qty} м</b></span>
+      <span>${esc(matLabel(m))} — расход: <b>${x.qty} м</b></span>
       <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
     </div>`;
   }).join('');
@@ -753,20 +795,25 @@ function renderWoItems() {
     el.innerHTML = '<div class="empty" style="margin-bottom:12px">Сначала создайте изделия</div>';
     return;
   }
-  const options = state.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
   el.innerHTML = woItems.map((item, i) => `
     <div class="wo-item-row">
       <div class="field">
         <label>Изделие</label>
-        <select onchange="woItems[${i}].prodId=this.value;updateWoPreview()">
-          <option value="">— выберите —</option>
-          ${state.products.map(p => `<option value="${p.id}" ${item.prodId===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}
-        </select>
+        <div class="input-wrap">
+          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
+          <select onchange="woItems[${i}].prodId=this.value;updateWoPreview()">
+            <option value="">— выберите —</option>
+            ${state.products.map(p => `<option value="${p.id}" ${item.prodId===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}
+          </select>
+        </div>
       </div>
       <div class="field narrow">
         <label>Кол-во (шт)</label>
-        <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="1"
-          oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
+        <div class="input-wrap">
+          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
+          <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="Введите кол-во"
+            oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
+        </div>
       </div>
       ${woItems.length > 1 ? `<div style="padding-bottom:2px"><button class="btn btn-danger btn-sm" onclick="removeWoItem(${i})">✕</button></div>` : ''}
     </div>
@@ -859,6 +906,43 @@ function doWriteoff() {
   setTimeout(() => okEl.textContent = '', 4000);
 }
 
+// ── Day navigation ─────────────────────────────────────────────────────────
+function prevSummaryDay() { summaryDay = new Date(summaryDay - 86400000); renderDayHistory(); }
+function nextSummaryDay() {
+  const next = new Date(summaryDay.getTime() + 86400000);
+  const today = new Date(); today.setHours(0,0,0,0);
+  if (next <= today) { summaryDay = next; renderDayHistory(); }
+}
+function renderDayHistory() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const isToday = summaryDay.getTime() === today.getTime();
+  const isYest = summaryDay.getTime() === today.getTime() - 86400000;
+  const label = isToday ? 'Сегодня' : isYest ? 'Вчера' : summaryDay.toLocaleDateString('ru', {day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('day-nav-label').textContent = label;
+  const nextBtn = document.getElementById('day-nav-next');
+  if (nextBtn) nextBtn.disabled = isToday;
+
+  const dayWOs = state.writeoffs.filter(w => {
+    if (!state.products.find(p => p.id === w.productId)) return false;
+    const d = new Date(w.timestamp); d.setHours(0,0,0,0);
+    return d.getTime() === summaryDay.getTime();
+  });
+
+  const wrap = document.getElementById('day-table-wrap');
+  if (!dayWOs.length) { wrap.innerHTML = '<div class="empty">Списаний за этот день нет</div>'; return; }
+
+  const rows = dayWOs.map(w => {
+    const time = new Date(w.timestamp).toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'});
+    const mats = w.items.map(i => `<span class="wo-mat-chip">${esc(i.materialName)}: ${i.meters.toFixed(2)} м</span>`).join(' ');
+    return `<tr><td>${time}</td><td style="font-weight:500">${esc(w.productName)}</td><td>${w.quantity} шт.</td><td>${mats}</td></tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="day-table">
+    <thead><tr><th>Время</th><th>Изделие</th><th>Кол-во</th><th>Состав</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
 // ── Summary ────────────────────────────────────────────────────────────────
 function renderSummary() {
   const total = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
@@ -890,43 +974,7 @@ function renderSummary() {
     </div>
   `).join('');
 
-  // History by day
-  const today = new Date(); today.setHours(0,0,0,0);
-  const yest = new Date(today - 86400000);
-  const groups = {};
-  const groupOrder = [];
-  [...state.writeoffs].reverse().forEach(w => {
-    const d = new Date(w.timestamp); d.setHours(0,0,0,0);
-    let key;
-    if (d.getTime() === today.getTime()) key = 'Сегодня';
-    else if (d.getTime() === yest.getTime()) key = 'Вчера';
-    else key = d.toLocaleDateString('ru', { day:'2-digit', month:'long', year:'numeric' });
-    if (!groups[key]) { groups[key] = []; groupOrder.push(key); }
-    groups[key].push(w);
-  });
-
-  if (!groupOrder.length) {
-    document.getElementById('history-by-day').innerHTML = '<div class="empty">История пуста</div>';
-    return;
-  }
-
-  document.getElementById('history-by-day').innerHTML = groupOrder.map(key => `
-    <div class="day-group">
-      <div class="day-label">${key}</div>
-      ${groups[key].map(w => {
-        const time = new Date(w.timestamp).toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' });
-        const chips = w.items.map(i => `<span class="wo-mat-chip">${esc(i.materialName)}: ${i.meters.toFixed(2)} м</span>`).join('');
-        return `<div class="wo-entry">
-          <div class="wo-entry-top">
-            <div class="wo-entry-name">${esc(w.productName)}</div>
-            <div class="wo-entry-time">${time}</div>
-          </div>
-          <div class="wo-entry-qty">${w.quantity} шт.</div>
-          <div class="wo-entry-mats">${chips}</div>
-        </div>`;
-      }).join('')}
-    </div>
-  `).join('');
+  renderDayHistory();
 }
 
 // ── Render all ────────────────────────────────────────────────────────────
