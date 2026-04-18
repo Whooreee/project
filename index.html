@@ -105,7 +105,7 @@
     .field label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
     .field input, .field select { height: var(--ctrl-h); padding: 0 var(--ctrl-px); font-size: var(--ctrl-fs); border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); color: var(--text); outline: none; transition: border-color 0.13s, box-shadow 0.13s; box-sizing: border-box; }
     .field input:focus, .field select:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
-    .form-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .form-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
 
     /* ── UI Kit ────────────────────────────────── */
     /* All controls share the same height token: --ctrl-h = 36px */
@@ -412,7 +412,7 @@
       <div id="wo-items-list"></div>
       <button class="btn btn-secondary wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
       <div id="wo-preview"></div>
-      <div class="form-actions" style="margin-top:12px">
+      <div class="form-actions">
         <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
         <div id="wo-err" class="err"></div>
         <div id="wo-ok" class="ok-msg"></div>
