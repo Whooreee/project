@@ -4,548 +4,596 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Склад</title>
-  <link rel="stylesheet" href="https://unpkg.com/antd@4.24.16/dist/antd.min.css">
-  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/antd@4.24.16/dist/antd.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    body { margin: 0; background: #f5f5f5; }
-    #root { min-height: 100vh; }
-    .mat-stock-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .mat-stock-val { min-width: 75px; text-align: right; font-weight: 600; }
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f7f5;
+      --border: #e6e6e6;
+      --text: #1a1a1a;
+      --text2: #6b6b6b;
+      --muted: #9b9b9b;
+      --red: #c0392b;
+      --red2: #a93226;
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); font-size: 15px; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+
+    /* auth */
+    .auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .auth-screen.hidden { display: none; }
+    .auth-card { width: 100%; max-width: 300px; margin: 16px; padding: 36px 24px; border: 1px solid var(--border); border-radius: 12px; text-align: center; }
+    .auth-title { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .auth-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .auth-input { width: 100%; padding: 11px 14px; font-size: 18px; letter-spacing: 0.15em; border: 1px solid var(--border); border-radius: 8px; outline: none; font-family: var(--font); margin-bottom: 12px; text-align: center; background: var(--bg2); }
+    .auth-input:focus { border-color: #aaa; background: var(--bg); }
+    .auth-error { color: var(--red); font-size: 13px; margin-top: 8px; min-height: 18px; }
+
+    /* layout */
+    .app { max-width: 800px; margin: 0 auto; padding: 0 20px 80px; }
+    .header { padding: 24px 0 0; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 20px; font-weight: 600; }
+    .sync-status { font-size: 11px; color: var(--muted); }
+
+    /* tabs */
+    .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
+    .tab-btn { padding: 8px 16px; font-size: 14px; font-family: var(--font); color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color 0.15s; flex-shrink: 0; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--red); font-weight: 500; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* section */
+    .section { margin-bottom: 32px; }
+    .section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+
+    /* form */
+    .form { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+    .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 10px; }
+    .form-row:last-child { margin-bottom: 0; }
+    .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 90px; }
+    .field label { font-size: 12px; color: var(--text2); }
+    .field input, .field select { font-family: var(--font); font-size: 14px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); outline: none; width: 100%; }
+    .field input:focus, .field select:focus { border-color: #aaa; }
+
+    /* buttons */
+    .btn { font-family: var(--font); font-size: 13px; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; transition: background 0.12s; white-space: nowrap; line-height: 1.4; }
+    .btn-primary { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-primary:hover { background: var(--red2); border-color: var(--red2); }
+    .btn-ghost { background: none; color: var(--red); border-color: var(--red); }
+    .btn-ghost:hover { background: #fdf2f2; }
+    .btn-danger { background: none; color: #cc3333; border-color: transparent; padding: 4px 8px; font-size: 12px; }
+    .btn-danger:hover { background: #fff0f0; }
+
+    /* material list */
+    .item-list { display: flex; flex-direction: column; gap: 6px; }
+    .mat-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); gap: 12px; flex-wrap: wrap; }
+    .mat-name { font-size: 14px; font-weight: 500; flex: 1; min-width: 140px; }
+    .mat-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+    .tag-pipe { background: #e6f0ff; color: #1a5cb5; }
+    .tag-profile { background: #e6f7ee; color: #1a7a3c; }
+    .stock-row { display: flex; align-items: center; gap: 6px; }
+    .stock-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); flex-shrink: 0; }
+    .stock-btn:hover { background: var(--bg2); }
+    .stock-input { width: 58px; text-align: center; font-size: 13px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font); outline: none; }
+    .stock-val { font-size: 14px; font-weight: 600; min-width: 70px; text-align: right; }
+
+    /* product */
+    .prod-item { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); overflow: hidden; }
+    .prod-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
+    .prod-name { font-size: 14px; font-weight: 500; }
+    .prod-body { padding: 0 14px 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+    .comp-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 2px 0; }
+    .added-mat { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; font-size: 13px; color: var(--text2); }
+
+    /* preview */
+    .preview-box { margin-top: 10px; padding: 12px; background: var(--bg); border-radius: 6px; border: 1px solid var(--border); }
+    .preview-title { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .preview-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 2px 0; }
+    .not-enough { color: #cc3333 !important; }
+
+    /* stats */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+    .stat-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); }
+    .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .stat-value { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+
+    /* table */
+    .bd-table { width: 100%; border-collapse: collapse; }
+    .bd-table th, .bd-table td { text-align: left; padding: 9px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .bd-table th { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .bd-table td { color: var(--text2); }
+    .bd-table td:first-child { color: var(--text); }
+
+    /* history */
+    .hist-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; flex-wrap: wrap; gap: 4px; }
+    .hist-name { font-size: 14px; font-weight: 500; }
+    .hist-date { font-size: 12px; color: var(--muted); }
+    .hist-detail { font-size: 13px; color: var(--text2); }
+
+    /* misc */
+    .empty { padding: 24px; text-align: center; color: var(--muted); font-size: 14px; border: 1px dashed var(--border); border-radius: var(--radius); }
+    .err { font-size: 13px; color: #cc3333; margin-top: 8px; min-height: 18px; }
+    .ok { font-size: 13px; color: #2d7a2d; margin-top: 8px; min-height: 18px; }
+
+    /* mobile */
+    @media (max-width: 600px) {
+      .app { padding: 0 12px 80px; }
+      .tabs { margin-bottom: 16px; }
+      .tab-btn { padding: 8px 12px; font-size: 13px; }
+      .form { padding: 12px; }
+      .form-row { flex-direction: column; gap: 8px; }
+      .field { min-width: unset; width: 100%; }
+      .field input, .field select { font-size: 16px; padding: 10px 12px; min-height: 44px; }
+      .btn { min-height: 44px; padding: 10px 16px; font-size: 14px; width: 100%; }
+      .btn-danger { width: auto; min-height: 36px; }
+      .mat-item { flex-direction: column; align-items: flex-start; }
+      .stock-row { width: 100%; }
+      .stock-btn { width: 44px; height: 44px; }
+      .stock-input { flex: 1; min-height: 44px; font-size: 16px; }
+      .stats-grid { gap: 8px; }
+      .stat-value { font-size: 20px; }
+    }
   </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const {
-  ConfigProvider, Tabs, Form, Input, InputNumber, Select, Button,
-  Table, Card, Statistic, List, Space, Typography, Tag, Popconfirm,
-  Row, Col, Empty, message
-} = antd;
 
-const { useState, useEffect, useCallback } = React;
+<!-- Auth -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-title">Склад</div>
+    <div class="auth-sub">Введите пароль для входа</div>
+    <input type="password" id="auth-input" class="auth-input" placeholder="••••"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Войти</button>
+    <div id="auth-error" class="auth-error"></div>
+  </div>
+</div>
 
-// ── Config ────────────────────────────────────────────────────────
+<!-- App -->
+<div class="app">
+  <div class="header">
+    <h1>Склад</h1>
+    <span id="sync-status" class="sync-status"></span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('materials')">Материалы</button>
+    <button class="tab-btn" onclick="switchTab('products')">Изделия</button>
+    <button class="tab-btn" onclick="switchTab('writeoffs')">Списания</button>
+    <button class="tab-btn" onclick="switchTab('summary')">Итог</button>
+  </div>
+
+  <!-- Материалы -->
+  <div id="tab-materials" class="tab-pane active">
+    <div class="form">
+      <div class="form-row">
+        <div class="field" style="max-width:130px">
+          <label>Тип</label>
+          <select id="mat-type" onchange="updateMatFields()">
+            <option value="pipe">Труба</option>
+            <option value="profile">Профиль</option>
+          </select>
+        </div>
+        <div class="field" id="f-diameter">
+          <label>Диаметр (мм)</label>
+          <input type="number" id="mat-diameter" placeholder="57" min="0">
+        </div>
+        <div class="field" id="f-height" style="display:none">
+          <label>Высота (мм)</label>
+          <input type="number" id="mat-height" placeholder="60" min="0">
+        </div>
+        <div class="field" id="f-width" style="display:none">
+          <label>Ширина (мм)</label>
+          <input type="number" id="mat-width" placeholder="40" min="0">
+        </div>
+        <div class="field">
+          <label>Стенка (мм)</label>
+          <input type="number" id="mat-wall" placeholder="3.5" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label>Остаток (м)</label>
+          <input type="number" id="mat-stock" placeholder="0" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="form-row">
+        <button class="btn btn-primary" onclick="addMaterial()">Добавить материал</button>
+      </div>
+      <div id="mat-error" class="err"></div>
+    </div>
+    <div id="materials-list" class="item-list"></div>
+  </div>
+
+  <!-- Изделия -->
+  <div id="tab-products" class="tab-pane">
+    <div class="form">
+      <div class="form-row">
+        <div class="field">
+          <label>Название изделия</label>
+          <input type="text" id="prod-name" placeholder="Например: Рама 2м">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Материал</label>
+          <select id="prod-mat-select"></select>
+        </div>
+        <div class="field" style="max-width:130px">
+          <label>Расход (м)</label>
+          <input type="number" id="prod-mat-amount" placeholder="1.5" min="0" step="0.01">
+        </div>
+        <div class="field" style="flex:0; align-self:flex-end">
+          <button class="btn btn-ghost" onclick="addMatToProduct()">+ Добавить</button>
+        </div>
+      </div>
+      <div id="prod-materials"></div>
+      <div class="form-row" style="margin-top:4px">
+        <button class="btn btn-primary" onclick="addProduct()">Создать изделие</button>
+      </div>
+      <div id="prod-error" class="err"></div>
+    </div>
+    <div id="products-list" class="item-list"></div>
+  </div>
+
+  <!-- Списания -->
+  <div id="tab-writeoffs" class="tab-pane">
+    <div class="form">
+      <div class="form-row">
+        <div class="field">
+          <label>Изделие</label>
+          <select id="wo-product" onchange="updateWoPreview()"></select>
+        </div>
+        <div class="field" style="max-width:150px">
+          <label>Количество (шт)</label>
+          <input type="number" id="wo-qty" placeholder="1" min="1" step="1" oninput="updateWoPreview()">
+        </div>
+      </div>
+      <div id="wo-preview"></div>
+      <div class="form-row" style="margin-top:12px">
+        <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
+      </div>
+      <div id="wo-error" class="err"></div>
+      <div id="wo-ok" class="ok"></div>
+    </div>
+  </div>
+
+  <!-- Итог -->
+  <div id="tab-summary" class="tab-pane">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="section">
+      <div class="section-title">По материалам</div>
+      <div id="breakdown"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">История списаний</div>
+      <div id="history"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────
 const PASSWORD  = '1488';
 const CLOUD_DB  = 'https://proxytherm-e2db4-default-rtdb.firebaseio.com';
 const STORE_KEY = 'sklad-v1';
-// ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 
-function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+let state = { materials: [], products: [], writeoffs: [] };
+let newProdMats = [];
+
+// Auth
+function doLogin() {
+  const val = document.getElementById('auth-input').value;
+  if (val === PASSWORD) {
+    sessionStorage.setItem('sklad-auth', '1');
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('auth-input').value = '';
+    initApp();
+  } else {
+    const el = document.getElementById('auth-error');
+    el.textContent = 'Неверный пароль';
+    document.getElementById('auth-input').value = '';
+    setTimeout(() => el.textContent = '', 2000);
+  }
 }
 
-function matLabel(m) {
-  if (!m) return 'удалён';
-  return m.type === 'pipe'
-    ? `Труба Ø${m.diameter}×${m.wall}`
-    : `Профиль ${m.height}×${m.width}×${m.wall}`;
+// Tabs
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    const names = ['materials','products','writeoffs','summary'];
+    b.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
 }
 
+// Storage
 function loadLocal() {
-  try {
-    const s = localStorage.getItem(STORE_KEY);
-    return s ? JSON.parse(s) : { materials: [], products: [], writeoffs: [] };
-  } catch { return { materials: [], products: [], writeoffs: [] }; }
+  try { const s = localStorage.getItem(STORE_KEY); if (s) state = JSON.parse(s); } catch(e) {}
 }
-function saveLocal(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+function saveLocal() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
 async function loadCloud() {
   try {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`);
-    if (!res.ok) return { result: 'error' };
+    if (!res.ok) return 'error';
     const data = await res.json();
-    return data && typeof data === 'object' ? { result: 'loaded', data } : { result: 'empty' };
-  } catch { return { result: 'error' }; }
+    if (data && typeof data === 'object') { state = data; return 'loaded'; }
+    return 'empty';
+  } catch(e) { return 'error'; }
 }
 
-async function saveCloud(state) {
+async function saveCloud() {
   try {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state)
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state)
     });
     return res.ok;
-  } catch { return false; }
+  } catch(e) { return false; }
 }
 
-// ── Auth ──────────────────────────────────────────────────────────
-function AuthScreen({ onLogin }) {
-  const [pwd, setPwd] = useState('');
-  const [error, setError] = useState('');
+function setSyncStatus(t) { document.getElementById('sync-status').textContent = t; }
 
-  const login = () => {
-    if (pwd === PASSWORD) {
-      sessionStorage.setItem('sklad-auth', '1');
-      onLogin();
-    } else {
-      setError('Неверный пароль');
-      setPwd('');
-      setTimeout(() => setError(''), 2000);
-    }
-  };
-
-  return (
-    <div style={{ position:'fixed', inset:0, display:'flex', alignItems:'center', justifyContent:'center', background:'#fff' }}>
-      <Card style={{ width: 320, textAlign: 'center' }}>
-        <Typography.Title level={3} style={{ marginBottom: 4 }}>Склад</Typography.Title>
-        <Typography.Text type="secondary" style={{ display:'block', marginBottom: 24 }}>
-          Введите пароль для входа
-        </Typography.Text>
-        <Input.Password
-          size="large"
-          value={pwd}
-          onChange={e => setPwd(e.target.value)}
-          onPressEnter={login}
-          placeholder="Пароль"
-          style={{ marginBottom: 12 }}
-          autoFocus
-        />
-        <Button type="primary" size="large" block onClick={login}>Войти</Button>
-        {error && <Typography.Text type="danger" style={{ display:'block', marginTop: 8 }}>{error}</Typography.Text>}
-      </Card>
-    </div>
-  );
+function save() {
+  saveLocal();
+  saveCloud().then(ok => setSyncStatus(ok
+    ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
+    : 'Нет связи'));
+  renderAll();
 }
 
-// ── Materials tab ─────────────────────────────────────────────────
-function MaterialItem({ m, onAdjust, onDelete }) {
-  const [amt, setAmt] = useState(1);
-  return (
-    <List.Item
-      actions={[
-        <Popconfirm key="del" title="Удалить материал?" onConfirm={() => onDelete(m.id)} okText="Да" cancelText="Нет">
-          <Button danger size="small" type="text">Удалить</Button>
-        </Popconfirm>
-      ]}
-    >
-      <div style={{ display:'flex', alignItems:'center', gap:12, flex:1, flexWrap:'wrap' }}>
-        <div style={{ flex:1, minWidth:120 }}>
-          <Space>
-            <Tag color={m.type === 'pipe' ? 'blue' : 'green'} style={{ margin:0 }}>
-              {m.type === 'pipe' ? 'Труба' : 'Профиль'}
-            </Tag>
-            <Typography.Text strong>{matLabel(m)}</Typography.Text>
-          </Space>
-        </div>
-        <div className="mat-stock-row">
-          <Button size="small" onClick={() => onAdjust(m.id, -1, amt)}>−</Button>
-          <InputNumber size="small" value={amt} min={0.01} step={0.01}
-            style={{ width:65 }} onChange={v => setAmt(v || 1)} />
-          <Button size="small" onClick={() => onAdjust(m.id, 1, amt)}>+</Button>
-          <span className="mat-stock-val">{m.stock.toFixed(2)} м</span>
-        </div>
+// Helpers
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function matLabel(m) {
+  if (!m) return 'удалён';
+  return m.type === 'pipe' ? `Труба Ø${m.diameter}×${m.wall}` : `Профиль ${m.height}×${m.width}×${m.wall}`;
+}
+
+// Material fields toggle
+function updateMatFields() {
+  const t = document.getElementById('mat-type').value;
+  document.getElementById('f-diameter').style.display = t === 'pipe' ? '' : 'none';
+  document.getElementById('f-height').style.display = t === 'profile' ? '' : 'none';
+  document.getElementById('f-width').style.display = t === 'profile' ? '' : 'none';
+}
+
+// Materials CRUD
+function addMaterial() {
+  const type = document.getElementById('mat-type').value;
+  const wall = parseFloat(document.getElementById('mat-wall').value);
+  const stock = parseFloat(document.getElementById('mat-stock').value) || 0;
+  if (!wall || wall <= 0) { document.getElementById('mat-error').textContent = 'Укажите толщину стенки'; return; }
+  const mat = { id: genId(), type, wall, stock };
+  if (type === 'pipe') {
+    const d = parseFloat(document.getElementById('mat-diameter').value);
+    if (!d || d <= 0) { document.getElementById('mat-error').textContent = 'Укажите диаметр'; return; }
+    mat.diameter = d;
+  } else {
+    const h = parseFloat(document.getElementById('mat-height').value);
+    const w = parseFloat(document.getElementById('mat-width').value);
+    if (!h || !w) { document.getElementById('mat-error').textContent = 'Укажите высоту и ширину'; return; }
+    mat.height = h; mat.width = w;
+  }
+  document.getElementById('mat-error').textContent = '';
+  state.materials.push(mat);
+  save();
+  ['mat-diameter','mat-wall','mat-stock','mat-height','mat-width'].forEach(id => document.getElementById(id).value = '');
+}
+
+function adjustStock(id, delta) {
+  const m = state.materials.find(m => m.id === id);
+  if (!m) return;
+  const amt = parseFloat(document.getElementById('si-' + id).value) || 0;
+  if (amt <= 0) return;
+  m.stock = Math.max(0, Math.round((m.stock + delta * amt) * 1000) / 1000);
+  save();
+}
+
+function deleteMaterial(id) {
+  state.materials = state.materials.filter(m => m.id !== id);
+  save();
+}
+
+function renderMaterials() {
+  const el = document.getElementById('materials-list');
+  if (!state.materials.length) { el.innerHTML = '<div class="empty">Нет материалов — добавьте первый</div>'; return; }
+  el.innerHTML = state.materials.map(m => `
+    <div class="mat-item">
+      <div class="mat-name">
+        <span class="mat-tag ${m.type === 'pipe' ? 'tag-pipe' : 'tag-profile'}">${m.type === 'pipe' ? 'Труба' : 'Профиль'}</span>
+        ${matLabel(m)}
       </div>
-    </List.Item>
-  );
-}
-
-function MaterialsTab({ state, onSave }) {
-  const [form] = Form.useForm();
-  const [matType, setMatType] = useState('pipe');
-
-  const addMaterial = values => {
-    const mat = { id: genId(), type: values.type, wall: values.wall, stock: values.stock || 0 };
-    if (values.type === 'pipe') mat.diameter = values.diameter;
-    else { mat.height = values.height; mat.width = values.width; }
-    onSave({ ...state, materials: [...state.materials, mat] });
-    form.resetFields(['diameter','height','width','wall','stock']);
-    message.success('Материал добавлен');
-  };
-
-  const adjustStock = (id, delta, amt) => {
-    onSave({
-      ...state,
-      materials: state.materials.map(m =>
-        m.id === id ? { ...m, stock: Math.max(0, Math.round((m.stock + delta * amt) * 1000) / 1000) } : m
-      )
-    });
-  };
-
-  const deleteMaterial = id => {
-    onSave({ ...state, materials: state.materials.filter(m => m.id !== id) });
-  };
-
-  return (
-    <Space direction="vertical" style={{ width:'100%' }} size="middle">
-      <Card title="Добавить материал" size="small">
-        <Form form={form} layout="vertical" onFinish={addMaterial} initialValues={{ type:'pipe', stock:0 }}>
-          <Row gutter={[12,0]}>
-            <Col xs={24} sm={6}>
-              <Form.Item name="type" label="Тип">
-                <Select onChange={v => { setMatType(v); form.resetFields(['diameter','height','width']); }}>
-                  <Select.Option value="pipe">Труба</Select.Option>
-                  <Select.Option value="profile">Профиль</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            {matType === 'pipe' ? (
-              <Col xs={24} sm={6}>
-                <Form.Item name="diameter" label="Диаметр (мм)" rules={[{ required:true, message:'Укажите' }]}>
-                  <InputNumber min={0} placeholder="57" style={{ width:'100%' }} />
-                </Form.Item>
-              </Col>
-            ) : (<>
-              <Col xs={12} sm={4}>
-                <Form.Item name="height" label="Высота (мм)" rules={[{ required:true, message:'Укажите' }]}>
-                  <InputNumber min={0} placeholder="60" style={{ width:'100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={12} sm={4}>
-                <Form.Item name="width" label="Ширина (мм)" rules={[{ required:true, message:'Укажите' }]}>
-                  <InputNumber min={0} placeholder="40" style={{ width:'100%' }} />
-                </Form.Item>
-              </Col>
-            </>)}
-            <Col xs={12} sm={4}>
-              <Form.Item name="wall" label="Стенка (мм)" rules={[{ required:true, message:'Укажите' }]}>
-                <InputNumber min={0} step={0.1} placeholder="3.5" style={{ width:'100%' }} />
-              </Form.Item>
-            </Col>
-            <Col xs={12} sm={4}>
-              <Form.Item name="stock" label="Остаток (м)">
-                <InputNumber min={0} step={0.01} style={{ width:'100%' }} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Button type="primary" htmlType="submit">Добавить</Button>
-        </Form>
-      </Card>
-
-      {state.materials.length === 0
-        ? <Empty description="Нет материалов — добавьте первый" />
-        : <Card size="small">
-            <List
-              dataSource={state.materials}
-              renderItem={m => <MaterialItem key={m.id} m={m} onAdjust={adjustStock} onDelete={deleteMaterial} />}
-            />
-          </Card>
-      }
-    </Space>
-  );
-}
-
-// ── Products tab ──────────────────────────────────────────────────
-function ProductsTab({ state, onSave }) {
-  const [form] = Form.useForm();
-  const [prodMats, setProdMats] = useState([]);
-
-  const addMat = () => {
-    const matId = form.getFieldValue('p_mat');
-    const amount = form.getFieldValue('p_amt');
-    if (!matId || !amount || amount <= 0) return;
-    setProdMats(prev => {
-      const i = prev.findIndex(x => x.matId === matId);
-      if (i >= 0) { const u = [...prev]; u[i] = { matId, amount }; return u; }
-      return [...prev, { matId, amount }];
-    });
-    form.setFieldValue('p_amt', null);
-  };
-
-  const createProduct = () => {
-    const name = form.getFieldValue('p_name')?.trim();
-    if (!name) { message.error('Укажите название'); return; }
-    if (!prodMats.length) { message.error('Добавьте хотя бы один материал'); return; }
-    onSave({ ...state, products: [...state.products, { id: genId(), name, materials: prodMats }] });
-    setProdMats([]);
-    form.setFieldsValue({ p_name: '', p_amt: null });
-    message.success('Изделие создано');
-  };
-
-  const deleteProduct = id => {
-    onSave({ ...state, products: state.products.filter(p => p.id !== id) });
-  };
-
-  return (
-    <Space direction="vertical" style={{ width:'100%' }} size="middle">
-      <Card title="Создать изделие" size="small">
-        <Form form={form} layout="vertical">
-          <Form.Item name="p_name" label="Название изделия">
-            <Input placeholder="Например: Рама 2м" />
-          </Form.Item>
-          {state.materials.length > 0 && (
-            <Row gutter={[12,0]} align="bottom">
-              <Col xs={24} sm={12}>
-                <Form.Item name="p_mat" label="Материал">
-                  <Select placeholder="Выберите материал">
-                    {state.materials.map(m => (
-                      <Select.Option key={m.id} value={m.id}>{matLabel(m)}</Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col xs={16} sm={8}>
-                <Form.Item name="p_amt" label="Расход (м)">
-                  <InputNumber min={0} step={0.01} placeholder="1.5" style={{ width:'100%' }} />
-                </Form.Item>
-              </Col>
-              <Col xs={8} sm={4}>
-                <Form.Item label=" ">
-                  <Button onClick={addMat} block>+ Добавить</Button>
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-          {prodMats.map(x => {
-            const m = state.materials.find(m => m.id === x.matId);
-            return (
-              <div key={x.matId} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'6px 10px', background:'#fafafa', border:'1px solid #f0f0f0', borderRadius:6, marginBottom:6 }}>
-                <Typography.Text type="secondary">{matLabel(m)} — {x.amount} м</Typography.Text>
-                <Button size="small" type="text" danger onClick={() => setProdMats(p => p.filter(i => i.matId !== x.matId))}>✕</Button>
-              </div>
-            );
-          })}
-          <Button type="primary" onClick={createProduct} style={{ marginTop:8 }}>Создать изделие</Button>
-        </Form>
-      </Card>
-
-      {state.products.length === 0
-        ? <Empty description="Нет изделий — создайте первое" />
-        : state.products.map(p => (
-            <Card key={p.id} size="small" style={{ marginBottom:8 }}
-              title={<Typography.Text strong>{p.name}</Typography.Text>}
-              extra={
-                <Popconfirm title="Удалить изделие?" onConfirm={() => deleteProduct(p.id)} okText="Да" cancelText="Нет">
-                  <Button danger size="small" type="text">Удалить</Button>
-                </Popconfirm>
-              }
-            >
-              {p.materials.map(x => {
-                const m = state.materials.find(m => m.id === x.matId);
-                return (
-                  <div key={x.matId} style={{ display:'flex', justifyContent:'space-between', fontSize:13, color:'#666', padding:'2px 0' }}>
-                    <span>{matLabel(m)}</span><span>{x.amount} м</span>
-                  </div>
-                );
-              })}
-            </Card>
-          ))
-      }
-    </Space>
-  );
-}
-
-// ── Writeoffs tab ─────────────────────────────────────────────────
-function WriteoffsTab({ state, onSave }) {
-  const [form] = Form.useForm();
-  const [preview, setPreview] = useState(null);
-
-  const updatePreview = () => {
-    const prodId = form.getFieldValue('wo_prod');
-    const qty = form.getFieldValue('wo_qty') || 1;
-    const p = state.products.find(p => p.id === prodId);
-    if (!p) { setPreview(null); return; }
-    setPreview({
-      qty,
-      items: p.materials.map(x => {
-        const m = state.materials.find(m => m.id === x.matId);
-        const total = x.amount * qty;
-        return { label: matLabel(m), total, enough: m && m.stock >= total };
-      })
-    });
-  };
-
-  const doWriteoff = () => {
-    const prodId = form.getFieldValue('wo_prod');
-    const qty = form.getFieldValue('wo_qty');
-    if (!prodId) { message.error('Выберите изделие'); return; }
-    if (!qty || qty <= 0) { message.error('Укажите количество'); return; }
-    const p = state.products.find(p => p.id === prodId);
-    if (!p) return;
-
-    for (const x of p.materials) {
-      const m = state.materials.find(m => m.id === x.matId);
-      if (!m || m.stock < x.amount * qty) { message.error(`Недостаточно: ${matLabel(m)}`); return; }
-    }
-
-    const newMats = state.materials.map(m => ({ ...m }));
-    const items = p.materials.map(x => {
-      const idx = newMats.findIndex(m => m.id === x.matId);
-      const meters = Math.round(x.amount * qty * 1000) / 1000;
-      newMats[idx].stock = Math.round((newMats[idx].stock - meters) * 1000) / 1000;
-      return { materialId: x.matId, materialName: matLabel(newMats[idx]), meters };
-    });
-
-    onSave({
-      ...state,
-      materials: newMats,
-      writeoffs: [...state.writeoffs, { id: genId(), productId: p.id, productName: p.name, quantity: qty, timestamp: Date.now(), items }]
-    });
-    form.setFieldValue('wo_qty', null);
-    setPreview(null);
-    message.success(`Списано: ${p.name} × ${qty} шт.`);
-  };
-
-  return (
-    <Space direction="vertical" style={{ width:'100%' }} size="middle">
-      <Card title="Списание" size="small">
-        {state.products.length === 0
-          ? <Empty description="Сначала создайте изделие" />
-          : <Form form={form} layout="vertical">
-              <Row gutter={[12,0]}>
-                <Col xs={24} sm={16}>
-                  <Form.Item name="wo_prod" label="Изделие">
-                    <Select placeholder="Выберите изделие" onChange={updatePreview}>
-                      {state.products.map(p => (
-                        <Select.Option key={p.id} value={p.id}>{p.name}</Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={8}>
-                  <Form.Item name="wo_qty" label="Количество (шт)">
-                    <InputNumber min={1} step={1} style={{ width:'100%' }} onChange={updatePreview} />
-                  </Form.Item>
-                </Col>
-              </Row>
-              {preview && (
-                <Card size="small" style={{ marginBottom:12, background:'#fafafa' }}
-                  title={<Typography.Text type="secondary" style={{ fontSize:12 }}>Состав на {preview.qty} шт.</Typography.Text>}
-                >
-                  {preview.items.map((item, i) => (
-                    <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:13, padding:'3px 0' }}>
-                      <span>{item.label}</span>
-                      <span style={{ color: item.enough ? '#666' : '#cc3333' }}>
-                        {item.total.toFixed(2)} м{!item.enough ? ' — недостаточно' : ''}
-                      </span>
-                    </div>
-                  ))}
-                </Card>
-              )}
-              <Button type="primary" onClick={doWriteoff}>Списать</Button>
-            </Form>
-        }
-      </Card>
-    </Space>
-  );
-}
-
-// ── Summary tab ───────────────────────────────────────────────────
-function SummaryTab({ state }) {
-  const totalItems  = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
-  const totalMeters = state.writeoffs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
-
-  const breakdown = {};
-  for (const w of state.writeoffs)
-    for (const item of w.items)
-      breakdown[item.materialName] = (breakdown[item.materialName] || 0) + item.meters;
-
-  const bdData = Object.entries(breakdown).map(([name, meters], i) => ({ key: i, name, meters }));
-  const histData = [...state.writeoffs].reverse().map(w => ({
-    key: w.id,
-    product: `${w.productName} — ${w.quantity} шт.`,
-    date: new Date(w.timestamp).toLocaleString('ru', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
-    detail: w.items.map(i => `${i.materialName}: ${i.meters.toFixed(2)} м`).join(' · ')
-  }));
-
-  return (
-    <Space direction="vertical" style={{ width:'100%' }} size="middle">
-      <Row gutter={[12,12]}>
-        <Col xs={8}><Card size="small"><Statistic title="Списано изделий" value={totalItems} /></Card></Col>
-        <Col xs={8}><Card size="small"><Statistic title="Материалов (м)" value={totalMeters.toFixed(2)} /></Card></Col>
-        <Col xs={8}><Card size="small"><Statistic title="Операций" value={state.writeoffs.length} /></Card></Col>
-      </Row>
-      <Card title="По материалам" size="small">
-        {bdData.length === 0
-          ? <Empty description="Списаний пока нет" />
-          : <Table dataSource={bdData} size="small" pagination={false}
-              columns={[
-                { title:'Материал', dataIndex:'name' },
-                { title:'Списано (м)', dataIndex:'meters', align:'right', render: v => v.toFixed(2) }
-              ]}
-            />
-        }
-      </Card>
-      <Card title="История списаний" size="small">
-        {histData.length === 0
-          ? <Empty description="История пуста" />
-          : <List dataSource={histData} renderItem={item => (
-              <List.Item key={item.key}>
-                <div style={{ width:'100%' }}>
-                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4, flexWrap:'wrap', gap:4 }}>
-                    <Typography.Text strong>{item.product}</Typography.Text>
-                    <Typography.Text type="secondary" style={{ fontSize:12 }}>{item.date}</Typography.Text>
-                  </div>
-                  <Typography.Text type="secondary" style={{ fontSize:13 }}>{item.detail}</Typography.Text>
-                </div>
-              </List.Item>
-            )} />
-        }
-      </Card>
-    </Space>
-  );
-}
-
-// ── Main app ──────────────────────────────────────────────────────
-function WarehouseApp() {
-  const [state, setStateRaw] = useState(loadLocal);
-  const [syncStatus, setSyncStatus] = useState('');
-
-  const onSave = useCallback(newState => {
-    setStateRaw(newState);
-    saveLocal(newState);
-    saveCloud(newState).then(ok => {
-      setSyncStatus(ok
-        ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
-        : 'Нет связи с облаком');
-    });
-  }, []);
-
-  useEffect(() => {
-    setSyncStatus('Синхронизация...');
-    loadCloud().then(({ result, data }) => {
-      if (result === 'loaded') {
-        setStateRaw(data); saveLocal(data); setSyncStatus('Синхронизировано');
-      } else if (result === 'empty') {
-        const local = loadLocal();
-        saveCloud(local).then(() => setSyncStatus('Синхронизировано'));
-      } else {
-        setSyncStatus('Облако недоступно');
-      }
-    });
-    const timer = setInterval(() => {
-      loadCloud().then(({ result, data }) => {
-        if (result === 'loaded') { setStateRaw(data); saveLocal(data); setSyncStatus('Синхронизировано'); }
-      });
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const tabs = [
-    { key:'materials', tab:'Материалы',  children: <MaterialsTab  state={state} onSave={onSave} /> },
-    { key:'products',  tab:'Изделия',    children: <ProductsTab   state={state} onSave={onSave} /> },
-    { key:'writeoffs', tab:'Списания',   children: <WriteoffsTab  state={state} onSave={onSave} /> },
-    { key:'summary',   tab:'Итог',       children: <SummaryTab    state={state} /> },
-  ];
-
-  return (
-    <div style={{ maxWidth:800, margin:'0 auto', padding:'0 16px 80px' }}>
-      <div style={{ padding:'20px 0 4px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <Typography.Title level={4} style={{ margin:0 }}>Склад</Typography.Title>
-        <Typography.Text type="secondary" style={{ fontSize:11 }}>{syncStatus}</Typography.Text>
+      <div class="stock-row">
+        <button class="stock-btn" onclick="adjustStock('${m.id}',-1)">−</button>
+        <input class="stock-input" id="si-${m.id}" type="number" value="1" min="0.01" step="0.01">
+        <button class="stock-btn" onclick="adjustStock('${m.id}',1)">+</button>
+        <div class="stock-val">${m.stock.toFixed(2)} м</div>
+        <button class="btn btn-danger" onclick="deleteMaterial('${m.id}')">✕</button>
       </div>
-      <Tabs>
-        {tabs.map(t => (
-          <Tabs.TabPane key={t.key} tab={t.tab}>
-            {t.children}
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
     </div>
-  );
+  `).join('');
 }
 
-// ── Root ──────────────────────────────────────────────────────────
-function Root() {
-  const [authed, setAuthed] = useState(sessionStorage.getItem('sklad-auth') === '1');
-  if (!authed) return <AuthScreen onLogin={() => setAuthed(true)} />;
-  return <WarehouseApp />;
+// Products CRUD
+function renderProdMatSelect() {
+  const sel = document.getElementById('prod-mat-select');
+  sel.innerHTML = state.materials.length
+    ? state.materials.map(m => `<option value="${m.id}">${matLabel(m)}</option>`).join('')
+    : '<option value="">— сначала добавьте материалы —</option>';
 }
 
-ReactDOM.render(<Root />, document.getElementById('root'));
+function addMatToProduct() {
+  const matId = document.getElementById('prod-mat-select').value;
+  const amount = parseFloat(document.getElementById('prod-mat-amount').value);
+  if (!matId || !amount || amount <= 0) return;
+  const i = newProdMats.findIndex(x => x.matId === matId);
+  if (i >= 0) newProdMats[i].amount = amount; else newProdMats.push({ matId, amount });
+  document.getElementById('prod-mat-amount').value = '';
+  renderNewProdMats();
+}
+
+function removeMatFromProduct(matId) {
+  newProdMats = newProdMats.filter(x => x.matId !== matId);
+  renderNewProdMats();
+}
+
+function renderNewProdMats() {
+  document.getElementById('prod-materials').innerHTML = newProdMats.map(x => {
+    const m = state.materials.find(m => m.id === x.matId);
+    return `<div class="added-mat"><span>${matLabel(m)} — ${x.amount} м</span><button class="btn btn-danger" onclick="removeMatFromProduct('${x.matId}')">✕</button></div>`;
+  }).join('');
+}
+
+function addProduct() {
+  const name = document.getElementById('prod-name').value.trim();
+  if (!name) { document.getElementById('prod-error').textContent = 'Укажите название'; return; }
+  if (!newProdMats.length) { document.getElementById('prod-error').textContent = 'Добавьте хотя бы один материал'; return; }
+  document.getElementById('prod-error').textContent = '';
+  state.products.push({ id: genId(), name, materials: [...newProdMats] });
+  newProdMats = [];
+  document.getElementById('prod-name').value = '';
+  renderNewProdMats();
+  save();
+}
+
+function deleteProduct(id) {
+  state.products = state.products.filter(p => p.id !== id);
+  save();
+}
+
+function renderProducts() {
+  const el = document.getElementById('products-list');
+  if (!state.products.length) { el.innerHTML = '<div class="empty">Нет изделий — создайте первое</div>'; return; }
+  el.innerHTML = state.products.map(p => `
+    <div class="prod-item">
+      <div class="prod-header">
+        <div class="prod-name">${p.name}</div>
+        <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">✕</button>
+      </div>
+      <div class="prod-body">
+        ${p.materials.map(x => {
+          const m = state.materials.find(m => m.id === x.matId);
+          return `<div class="comp-row"><span>${matLabel(m)}</span><span>${x.amount} м</span></div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Writeoffs
+function renderWoSelect() {
+  const sel = document.getElementById('wo-product');
+  sel.innerHTML = state.products.length
+    ? state.products.map(p => `<option value="${p.id}">${p.name}</option>`).join('')
+    : '<option value="">— сначала создайте изделие —</option>';
+  updateWoPreview();
+}
+
+function updateWoPreview() {
+  const prodId = document.getElementById('wo-product').value;
+  const qty = parseFloat(document.getElementById('wo-qty').value) || 1;
+  const el = document.getElementById('wo-preview');
+  const p = state.products.find(p => p.id === prodId);
+  if (!p) { el.innerHTML = ''; return; }
+  const rows = p.materials.map(x => {
+    const m = state.materials.find(m => m.id === x.matId);
+    const total = x.amount * qty;
+    const ok = m && m.stock >= total;
+    return `<div class="preview-row"><span>${matLabel(m)}</span><span class="${ok ? '' : 'not-enough'}">${total.toFixed(2)} м${!ok ? ' — недостаточно' : ''}</span></div>`;
+  }).join('');
+  el.innerHTML = `<div class="preview-box"><div class="preview-title">Состав на ${qty} шт.</div>${rows}</div>`;
+}
+
+function doWriteoff() {
+  const prodId = document.getElementById('wo-product').value;
+  const qty = parseFloat(document.getElementById('wo-qty').value);
+  const errEl = document.getElementById('wo-error');
+  const okEl = document.getElementById('wo-ok');
+  errEl.textContent = ''; okEl.textContent = '';
+  if (!prodId) { errEl.textContent = 'Выберите изделие'; return; }
+  if (!qty || qty <= 0) { errEl.textContent = 'Укажите количество'; return; }
+  const p = state.products.find(p => p.id === prodId);
+  for (const x of p.materials) {
+    const m = state.materials.find(m => m.id === x.matId);
+    if (!m || m.stock < x.amount * qty) { errEl.textContent = `Недостаточно: ${matLabel(m)}`; return; }
+  }
+  const items = p.materials.map(x => {
+    const m = state.materials.find(m => m.id === x.matId);
+    const meters = Math.round(x.amount * qty * 1000) / 1000;
+    m.stock = Math.round((m.stock - meters) * 1000) / 1000;
+    return { materialId: m.id, materialName: matLabel(m), meters };
+  });
+  state.writeoffs.push({ id: genId(), productId: p.id, productName: p.name, quantity: qty, timestamp: Date.now(), items });
+  document.getElementById('wo-qty').value = '';
+  okEl.textContent = `Списано: ${p.name} × ${qty} шт.`;
+  setTimeout(() => okEl.textContent = '', 3000);
+  save();
+}
+
+// Summary
+function renderSummary() {
+  const total = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
+  const meters = state.writeoffs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Списано изделий</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Материалов (м)</div><div class="stat-value">${meters.toFixed(2)}</div></div>
+    <div class="stat-card"><div class="stat-label">Операций</div><div class="stat-value">${state.writeoffs.length}</div></div>
+  `;
+  const bd = {};
+  for (const w of state.writeoffs) for (const i of w.items) bd[i.materialName] = (bd[i.materialName] || 0) + i.meters;
+  const bdEl = document.getElementById('breakdown');
+  bdEl.innerHTML = !Object.keys(bd).length
+    ? '<div class="empty">Списаний пока нет</div>'
+    : `<table class="bd-table"><thead><tr><th>Материал</th><th>Списано (м)</th></tr></thead><tbody>
+        ${Object.entries(bd).map(([n,m]) => `<tr><td>${n}</td><td>${m.toFixed(2)}</td></tr>`).join('')}
+       </tbody></table>`;
+  const hEl = document.getElementById('history');
+  if (!state.writeoffs.length) { hEl.innerHTML = '<div class="empty">История пуста</div>'; return; }
+  hEl.innerHTML = [...state.writeoffs].reverse().map(w => {
+    const date = new Date(w.timestamp).toLocaleString('ru', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    return `<div class="hist-item">
+      <div class="hist-top"><span class="hist-name">${w.productName} — ${w.quantity} шт.</span><span class="hist-date">${date}</span></div>
+      <div class="hist-detail">${w.items.map(i => `${i.materialName}: ${i.meters.toFixed(2)} м`).join(' · ')}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  renderMaterials();
+  renderProdMatSelect();
+  renderProducts();
+  renderWoSelect();
+  renderSummary();  // всегда обновляем итог
+}
+
+// Init
+async function initApp() {
+  loadLocal();
+  renderAll();
+  updateMatFields();
+  setSyncStatus('Синхронизация...');
+  const result = await loadCloud();
+  if (result === 'loaded') {
+    saveLocal(); renderAll(); setSyncStatus('Синхронизировано');
+  } else if (result === 'empty') {
+    saveCloud().then(() => setSyncStatus('Синхронизировано'));
+  } else {
+    setSyncStatus('Облако недоступно');
+  }
+  setInterval(async () => {
+    if (await loadCloud() === 'loaded') { saveLocal(); renderAll(); setSyncStatus('Синхронизировано'); }
+  }, 60000);
+}
+
+if (sessionStorage.getItem('sklad-auth') === '1') {
+  document.getElementById('auth-screen').classList.add('hidden');
+  initApp();
+} else {
+  setTimeout(() => document.getElementById('auth-input').focus(), 100);
+}
 </script>
 </body>
 </html>
