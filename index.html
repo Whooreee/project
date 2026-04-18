@@ -284,6 +284,15 @@ const STORE_KEY = 'sklad-v1';
 let state = { materials: [], products: [], writeoffs: [] };
 let newProdMats = [];
 
+function normalizeState(s) {
+  if (!s || typeof s !== 'object') return { materials: [], products: [], writeoffs: [] };
+  return {
+    materials: Array.isArray(s.materials) ? s.materials : [],
+    products:  Array.isArray(s.products)  ? s.products  : [],
+    writeoffs: Array.isArray(s.writeoffs) ? s.writeoffs : [],
+  };
+}
+
 // Auth
 function doLogin() {
   const val = document.getElementById('auth-input').value;
@@ -312,7 +321,7 @@ function switchTab(name) {
 
 // Storage
 function loadLocal() {
-  try { const s = localStorage.getItem(STORE_KEY); if (s) state = JSON.parse(s); } catch(e) {}
+  try { const s = localStorage.getItem(STORE_KEY); if (s) state = normalizeState(JSON.parse(s)); } catch(e) {}
 }
 function saveLocal() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
@@ -321,7 +330,7 @@ async function loadCloud() {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`);
     if (!res.ok) return 'error';
     const data = await res.json();
-    if (data && typeof data === 'object') { state = data; return 'loaded'; }
+    if (data && typeof data === 'object') { state = normalizeState(data); return 'loaded'; }
     return 'empty';
   } catch(e) { return 'error'; }
 }
