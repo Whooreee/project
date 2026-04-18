@@ -643,13 +643,22 @@ async function loadFromCloud() {
   if (!url) return false;
   try {
     const res = await fetch(url);
-    if (!res.ok) return false;
+    if (res.status === 401 || res.status === 403) {
+      setSyncStatus('Ошибка: нет доступа к БД — проверь правила Firebase');
+      return false;
+    }
+    if (!res.ok) {
+      setSyncStatus('Ошибка: ' + res.status);
+      return false;
+    }
     const data = await res.json();
     if (data && typeof data === 'object') {
       state = data;
       return true;
     }
-  } catch(e) {}
+  } catch(e) {
+    setSyncStatus('Ошибка сети: ' + e.message);
+  }
   return false;
 }
 
@@ -657,12 +666,16 @@ async function saveToCloud() {
   const url = syncUrl();
   if (!url) return;
   try {
-    await fetch(url, {
+    const res = await fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(state)
     });
-    setSyncStatus('Синхронизировано ' + new Date().toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'}));
+    if (res.ok) {
+      setSyncStatus('Синхронизировано ' + new Date().toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'}));
+    } else {
+      setSyncStatus('Ошибка сохранения: ' + res.status);
+    }
   } catch(e) {
     setSyncStatus('Нет связи с облаком');
   }
