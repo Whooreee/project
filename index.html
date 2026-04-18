@@ -369,9 +369,9 @@
 
       /* form */
       .form { padding: 12px; }
-      .form-row { flex-direction: column; gap: 8px; }
-      .field { min-width: unset; }
-      .field[style*="max-width"] { max-width: unset !important; }
+      .form-row { flex-direction: column; gap: 8px; align-items: stretch; }
+      .field { min-width: unset; width: 100%; max-width: 100% !important; flex: 1 1 100%; }
+      .field[style] { max-width: 100% !important; width: 100% !important; }
 
       /* bigger tap targets */
       .field input, .field select {
