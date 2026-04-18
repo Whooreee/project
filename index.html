@@ -357,6 +357,42 @@
     /* success */
     .success-msg { font-size: 13px; color: #2d7a2d; margin-top: 8px; min-height: 18px; }
 
+    /* auth */
+    .auth-screen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .auth-screen.hidden { display: none; }
+    .auth-card {
+      width: 100%; max-width: 300px;
+      padding: 36px 24px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      margin: 16px;
+    }
+    .auth-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .auth-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .auth-input {
+      width: 100%; padding: 11px 14px;
+      font-size: 18px; letter-spacing: 0.15em;
+      border: 1px solid var(--border); border-radius: 8px;
+      outline: none; font-family: var(--font);
+      margin-bottom: 12px; text-align: center;
+      background: var(--bg-secondary);
+    }
+    .auth-input:focus { border-color: #aaa; background: var(--bg); }
+    .auth-error { color: #cc3333; font-size: 13px; margin-top: 8px; min-height: 18px; }
+
+    /* sync badge */
+    .sync-status {
+      font-size: 11px; color: var(--text-muted);
+      text-align: right; padding: 4px 0 0;
+      min-height: 16px;
+    }
+
     /* responsive */
     @media (max-width: 600px) {
       .app { padding: 0 12px 80px; }
@@ -422,9 +458,21 @@
   </style>
 </head>
 <body>
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-title">Склад</div>
+    <div class="auth-sub">Введите пароль для входа</div>
+    <input type="password" id="auth-input" class="auth-input" placeholder="••••"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+    <div id="auth-error" class="auth-error"></div>
+  </div>
+</div>
+
 <div class="app">
   <div class="header">
     <h1>Склад</h1>
+    <div id="sync-status" class="sync-status"></div>
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('manage')">Управление</button>
       <button class="tab-btn" onclick="switchTab('summary')">Итог</button>
@@ -550,8 +598,75 @@
 </div>
 
 <script>
+// ─── НАСТРОЙКА ───────────────────────────────────────────────────
+// Чтобы данные синхронизировались между устройствами:
+// 1. Зайди на https://console.firebase.google.com
+// 2. Создай проект → Realtime Database → Создать базу данных (тестовый режим)
+// 3. Скопируй URL базы (вида https://ИМЯ-default-rtdb.firebaseio.com)
+// 4. Вставь его в CLOUD_DB ниже (без слеша в конце)
+const CLOUD_DB = ''; // например: 'https://my-sklad-default-rtdb.firebaseio.com'
+
+const PASSWORD = '1488';
+// ─────────────────────────────────────────────────────────────────
+
 let state = { materials: [], products: [], writeoffs: [] };
 let newProductMaterials = [];
+
+// Auth
+function doLogin() {
+  const val = document.getElementById('auth-input').value;
+  if (val === PASSWORD) {
+    sessionStorage.setItem('sklad-auth', '1');
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('auth-input').value = '';
+    initApp();
+  } else {
+    const err = document.getElementById('auth-error');
+    err.textContent = 'Неверный пароль';
+    document.getElementById('auth-input').value = '';
+    setTimeout(() => { err.textContent = ''; }, 2000);
+  }
+}
+
+// Cloud sync
+function syncUrl() {
+  return CLOUD_DB ? CLOUD_DB + '/sklad-v1.json' : null;
+}
+
+function setSyncStatus(text) {
+  const el = document.getElementById('sync-status');
+  if (el) el.textContent = text;
+}
+
+async function loadFromCloud() {
+  const url = syncUrl();
+  if (!url) return false;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (data && typeof data === 'object') {
+      state = data;
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function saveToCloud() {
+  const url = syncUrl();
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state)
+    });
+    setSyncStatus('Синхронизировано ' + new Date().toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'}));
+  } catch(e) {
+    setSyncStatus('Нет связи с облаком');
+  }
+}
 
 function load() {
   try {
@@ -562,6 +677,7 @@ function load() {
 
 function save() {
   localStorage.setItem('sklad-v1', JSON.stringify(state));
+  saveToCloud();
 }
 
 function genId() {
@@ -893,12 +1009,41 @@ function renderSummary() {
 }
 
 // Init
-load();
-updateMatFields();
-renderMaterials();
-renderProductMatSelect();
-renderProducts();
-renderWriteoffSelect();
+function renderAll() {
+  updateMatFields();
+  renderMaterials();
+  renderProductMatSelect();
+  renderProducts();
+  renderWriteoffSelect();
+}
+
+async function initApp() {
+  load(); // локальные данные сразу
+  renderAll();
+  if (CLOUD_DB) {
+    setSyncStatus('Синхронизация...');
+    const ok = await loadFromCloud();
+    if (ok) {
+      localStorage.setItem('sklad-v1', JSON.stringify(state));
+      renderAll();
+      setSyncStatus('Синхронизировано');
+    } else {
+      setSyncStatus('Облако недоступно — работаю локально');
+    }
+    // автосинхронизация каждые 60 сек
+    setInterval(async () => {
+      const ok = await loadFromCloud();
+      if (ok) { localStorage.setItem('sklad-v1', JSON.stringify(state)); renderAll(); }
+    }, 60000);
+  }
+}
+
+if (sessionStorage.getItem('sklad-auth') === '1') {
+  document.getElementById('auth-screen').classList.add('hidden');
+  initApp();
+} else {
+  setTimeout(() => document.getElementById('auth-input').focus(), 100);
+}
 </script>
 </body>
 </html>
