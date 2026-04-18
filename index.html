@@ -640,26 +640,27 @@ function setSyncStatus(text) {
 
 async function loadFromCloud() {
   const url = syncUrl();
-  if (!url) return false;
+  if (!url) return 'no-url';
   try {
     const res = await fetch(url);
     if (res.status === 401 || res.status === 403) {
       setSyncStatus('Ошибка: нет доступа к БД — проверь правила Firebase');
-      return false;
+      return 'error';
     }
     if (!res.ok) {
       setSyncStatus('Ошибка: ' + res.status);
-      return false;
+      return 'error';
     }
     const data = await res.json();
     if (data && typeof data === 'object') {
       state = data;
-      return true;
+      return 'loaded';
     }
+    return 'empty'; // база пустая (null)
   } catch(e) {
     setSyncStatus('Ошибка сети: ' + e.message);
+    return 'error';
   }
-  return false;
 }
 
 async function saveToCloud() {
@@ -1035,18 +1036,21 @@ async function initApp() {
   renderAll();
   if (CLOUD_DB) {
     setSyncStatus('Синхронизация...');
-    const ok = await loadFromCloud();
-    if (ok) {
+    const result = await loadFromCloud();
+    if (result === 'loaded') {
       localStorage.setItem('sklad-v1', JSON.stringify(state));
       renderAll();
       setSyncStatus('Синхронизировано');
-    } else {
+    } else if (result === 'empty') {
+      // база пустая — заливаем туда локальные данные
+      await saveToCloud();
+    } else if (result === 'error') {
       setSyncStatus('Облако недоступно — работаю локально');
     }
     // автосинхронизация каждые 60 сек
     setInterval(async () => {
-      const ok = await loadFromCloud();
-      if (ok) { localStorage.setItem('sklad-v1', JSON.stringify(state)); renderAll(); }
+      const r = await loadFromCloud();
+      if (r === 'loaded') { localStorage.setItem('sklad-v1', JSON.stringify(state)); renderAll(); }
     }, 60000);
   }
 }
