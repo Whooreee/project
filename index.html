@@ -62,6 +62,38 @@
   </style>
 </head>
 <body>
+  <svg width="160" height="100" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- вертикальная труба левая -->
+    <rect x="20" y="0" width="28" height="55" rx="4" fill="url(#metal)"/>
+    <rect x="24" y="0" width="8" height="55" fill="rgba(255,255,255,0.12)"/>
+    <!-- колено -->
+    <path d="M20 55 Q20 80 48 80" stroke="url(#metal2)" stroke-width="28" fill="none" stroke-linecap="round"/>
+    <path d="M24 55 Q24 76 48 76" stroke="rgba(255,255,255,0.12)" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- горизонтальная труба -->
+    <rect x="48" y="66" width="92" height="28" rx="4" fill="url(#metal)"/>
+    <rect x="48" y="70" width="92" height="8" fill="rgba(255,255,255,0.12)"/>
+    <!-- фланцы -->
+    <rect x="14" y="48" width="40" height="10" rx="3" fill="#7c8a9e"/>
+    <rect x="132" y="63" width="14" height="34" rx="3" fill="#7c8a9e"/>
+    <!-- пар -->
+    <g opacity="0.5">
+      <ellipse cx="148" cy="52" rx="4" ry="7" fill="white" opacity="0.3"/>
+      <ellipse cx="141" cy="44" rx="3" ry="6" fill="white" opacity="0.2"/>
+      <ellipse cx="155" cy="46" rx="3" ry="5" fill="white" opacity="0.2"/>
+    </g>
+    <defs>
+      <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stop-color="#8ea8c3"/>
+        <stop offset="50%" stop-color="#b0c4de"/>
+        <stop offset="100%" stop-color="#5a7a9a"/>
+      </linearGradient>
+      <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stop-color="#8ea8c3"/>
+        <stop offset="100%" stop-color="#5a7a9a"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
   <h1>Количество труб</h1>
   <p class="counter">Труб: <span id="count">0</span></p>
   <button onclick="document.getElementById('count').textContent = +document.getElementById('count').textContent + 1">
