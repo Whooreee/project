@@ -579,6 +579,9 @@ function switchTab(name) {
 }
 
 // ── Storage ───────────────────────────────────────────────────────────────
+let _dirtyLocal = false;
+let _syncRetryTimer = null;
+
 function loadLocal() {
   try { const s = localStorage.getItem(STORE_KEY); if (s) state = normalizeState(JSON.parse(s)); } catch(e) {}
 }
@@ -589,15 +592,24 @@ async function loadCloud() {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`);
     if (!res.ok) return 'error';
     const data = await res.json();
-    if (data && typeof data === 'object') { state = normalizeState(data); return 'loaded'; }
+    if (data && typeof data === 'object') {
+      // Only overwrite local state if cloud data is newer (has more recent updatedAt)
+      const cloudState = normalizeState(data);
+      if (!_dirtyLocal || (cloudState.updatedAt && (!state.updatedAt || cloudState.updatedAt > state.updatedAt))) {
+        state = cloudState;
+      }
+      return 'loaded';
+    }
     return 'empty';
   } catch { return 'error'; }
 }
+
 async function saveCloud() {
   try {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state)
     });
+    if (res.ok) { _dirtyLocal = false; }
     return res.ok;
   } catch { return false; }
 }
@@ -607,11 +619,29 @@ function setSyncStatus(ok, text) {
   document.getElementById('sync-text').textContent = text;
 }
 
+function scheduleRetry() {
+  if (_syncRetryTimer) return;
+  _syncRetryTimer = setTimeout(async () => {
+    _syncRetryTimer = null;
+    if (!_dirtyLocal) return;
+    const ok = await saveCloud();
+    setSyncStatus(ok,
+      ok ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
+         : 'Нет связи — повтор...');
+    if (!ok) scheduleRetry();
+  }, 15000);
+}
+
 function save() {
+  state.updatedAt = Date.now();
+  _dirtyLocal = true;
   saveLocal();
-  saveCloud().then(ok => setSyncStatus(ok,
-    ok ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
-       : 'Нет связи'));
+  saveCloud().then(ok => {
+    setSyncStatus(ok,
+      ok ? 'Синхронизировано ' + new Date().toLocaleTimeString('ru', { hour:'2-digit', minute:'2-digit' })
+         : 'Нет связи — повтор...');
+    if (!ok) scheduleRetry();
+  });
   renderAll();
 }
 
@@ -1143,9 +1173,8 @@ async function initApp() {
   } else {
     setSyncStatus(false, 'Нет связи');
   }
-  setInterval(async () => {
-    if (await loadCloud() === 'loaded') { saveLocal(); renderAll(); setSyncStatus(true, 'Синхронизировано'); }
-  }, 60000);
+  // No auto-pull interval — pulls overwrite local changes when cloud writes fail.
+  // Data loads on startup; all saves push immediately with retry on failure.
 }
 
 if (sessionStorage.getItem('sklad-auth') === '1') {
