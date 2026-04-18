@@ -4,33 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Склад</title>
-  <link rel="stylesheet" href="https://unpkg.com/antd@5/dist/reset.css">
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/dayjs/dayjs.min.js"></script>
-  <script src="https://unpkg.com/antd@5/dist/antd.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/antd@4.24.16/dist/antd.min.css">
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/antd@4.24.16/dist/antd.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    body { margin: 0; background: #fff; }
+    body { margin: 0; background: #f5f5f5; }
     #root { min-height: 100vh; }
+    .mat-stock-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .mat-stock-val { min-width: 75px; text-align: right; font-weight: 600; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const {
-  ConfigProvider, App, Tabs, Form, Input, InputNumber, Select, Button,
+  ConfigProvider, Tabs, Form, Input, InputNumber, Select, Button,
   Table, Card, Statistic, List, Space, Typography, Tag, Popconfirm,
-  Row, Col, Empty, Divider
+  Row, Col, Empty, message
 } = antd;
 
 const { useState, useEffect, useCallback } = React;
 
-// ── Config ──────────────────────────────────────────────────────────────
+// ── Config ────────────────────────────────────────────────────────
 const PASSWORD  = '1488';
 const CLOUD_DB  = 'https://proxytherm-e2db4-default-rtdb.firebaseio.com';
 const STORE_KEY = 'sklad-v1';
-// ────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -49,7 +50,6 @@ function loadLocal() {
     return s ? JSON.parse(s) : { materials: [], products: [], writeoffs: [] };
   } catch { return { materials: [], products: [], writeoffs: [] }; }
 }
-
 function saveLocal(s) { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
 
 async function loadCloud() {
@@ -57,8 +57,7 @@ async function loadCloud() {
     const res = await fetch(`${CLOUD_DB}/${STORE_KEY}.json`);
     if (!res.ok) return { result: 'error' };
     const data = await res.json();
-    if (data && typeof data === 'object') return { result: 'loaded', data };
-    return { result: 'empty' };
+    return data && typeof data === 'object' ? { result: 'loaded', data } : { result: 'empty' };
   } catch { return { result: 'error' }; }
 }
 
@@ -73,7 +72,7 @@ async function saveCloud(state) {
   } catch { return false; }
 }
 
-// ── Auth ─────────────────────────────────────────────────────────────────
+// ── Auth ──────────────────────────────────────────────────────────
 function AuthScreen({ onLogin }) {
   const [pwd, setPwd] = useState('');
   const [error, setError] = useState('');
@@ -106,17 +105,13 @@ function AuthScreen({ onLogin }) {
           autoFocus
         />
         <Button type="primary" size="large" block onClick={login}>Войти</Button>
-        {error && (
-          <Typography.Text type="danger" style={{ display:'block', marginTop: 8 }}>
-            {error}
-          </Typography.Text>
-        )}
+        {error && <Typography.Text type="danger" style={{ display:'block', marginTop: 8 }}>{error}</Typography.Text>}
       </Card>
     </div>
   );
 }
 
-// ── Materials tab ─────────────────────────────────────────────────────────
+// ── Materials tab ─────────────────────────────────────────────────
 function MaterialItem({ m, onAdjust, onDelete }) {
   const [amt, setAmt] = useState(1);
   return (
@@ -136,15 +131,13 @@ function MaterialItem({ m, onAdjust, onDelete }) {
             <Typography.Text strong>{matLabel(m)}</Typography.Text>
           </Space>
         </div>
-        <Space wrap size={4}>
+        <div className="mat-stock-row">
           <Button size="small" onClick={() => onAdjust(m.id, -1, amt)}>−</Button>
           <InputNumber size="small" value={amt} min={0.01} step={0.01}
             style={{ width:65 }} onChange={v => setAmt(v || 1)} />
           <Button size="small" onClick={() => onAdjust(m.id, 1, amt)}>+</Button>
-          <Typography.Text strong style={{ minWidth:80, textAlign:'right', display:'inline-block' }}>
-            {m.stock.toFixed(2)} м
-          </Typography.Text>
-        </Space>
+          <span className="mat-stock-val">{m.stock.toFixed(2)} м</span>
+        </div>
       </div>
     </List.Item>
   );
@@ -153,7 +146,6 @@ function MaterialItem({ m, onAdjust, onDelete }) {
 function MaterialsTab({ state, onSave }) {
   const [form] = Form.useForm();
   const [matType, setMatType] = useState('pipe');
-  const { message } = App.useApp();
 
   const addMaterial = values => {
     const mat = { id: genId(), type: values.type, wall: values.wall, stock: values.stock || 0 };
@@ -168,9 +160,7 @@ function MaterialsTab({ state, onSave }) {
     onSave({
       ...state,
       materials: state.materials.map(m =>
-        m.id === id
-          ? { ...m, stock: Math.max(0, Math.round((m.stock + delta * amt) * 1000) / 1000) }
-          : m
+        m.id === id ? { ...m, stock: Math.max(0, Math.round((m.stock + delta * amt) * 1000) / 1000) } : m
       )
     });
   };
@@ -230,9 +220,7 @@ function MaterialsTab({ state, onSave }) {
         : <Card size="small">
             <List
               dataSource={state.materials}
-              renderItem={m => (
-                <MaterialItem key={m.id} m={m} onAdjust={adjustStock} onDelete={deleteMaterial} />
-              )}
+              renderItem={m => <MaterialItem key={m.id} m={m} onAdjust={adjustStock} onDelete={deleteMaterial} />}
             />
           </Card>
       }
@@ -240,11 +228,10 @@ function MaterialsTab({ state, onSave }) {
   );
 }
 
-// ── Products tab ──────────────────────────────────────────────────────────
+// ── Products tab ──────────────────────────────────────────────────
 function ProductsTab({ state, onSave }) {
   const [form] = Form.useForm();
   const [prodMats, setProdMats] = useState([]);
-  const { message } = App.useApp();
 
   const addMat = () => {
     const matId = form.getFieldValue('p_mat');
@@ -341,11 +328,10 @@ function ProductsTab({ state, onSave }) {
   );
 }
 
-// ── Writeoffs tab ─────────────────────────────────────────────────────────
+// ── Writeoffs tab ─────────────────────────────────────────────────
 function WriteoffsTab({ state, onSave }) {
   const [form] = Form.useForm();
   const [preview, setPreview] = useState(null);
-  const { message } = App.useApp();
 
   const updatePreview = () => {
     const prodId = form.getFieldValue('wo_prod');
@@ -372,10 +358,7 @@ function WriteoffsTab({ state, onSave }) {
 
     for (const x of p.materials) {
       const m = state.materials.find(m => m.id === x.matId);
-      if (!m || m.stock < x.amount * qty) {
-        message.error(`Недостаточно: ${matLabel(m)}`);
-        return;
-      }
+      if (!m || m.stock < x.amount * qty) { message.error(`Недостаточно: ${matLabel(m)}`); return; }
     }
 
     const newMats = state.materials.map(m => ({ ...m }));
@@ -440,7 +423,7 @@ function WriteoffsTab({ state, onSave }) {
   );
 }
 
-// ── Summary tab ───────────────────────────────────────────────────────────
+// ── Summary tab ───────────────────────────────────────────────────
 function SummaryTab({ state }) {
   const totalItems  = state.writeoffs.reduce((s, w) => s + w.quantity, 0);
   const totalMeters = state.writeoffs.reduce((s, w) => s + w.items.reduce((ss, i) => ss + i.meters, 0), 0);
@@ -451,7 +434,6 @@ function SummaryTab({ state }) {
       breakdown[item.materialName] = (breakdown[item.materialName] || 0) + item.meters;
 
   const bdData = Object.entries(breakdown).map(([name, meters], i) => ({ key: i, name, meters }));
-
   const histData = [...state.writeoffs].reverse().map(w => ({
     key: w.id,
     product: `${w.productName} — ${w.quantity} шт.`,
@@ -466,19 +448,17 @@ function SummaryTab({ state }) {
         <Col xs={8}><Card size="small"><Statistic title="Материалов (м)" value={totalMeters.toFixed(2)} /></Card></Col>
         <Col xs={8}><Card size="small"><Statistic title="Операций" value={state.writeoffs.length} /></Card></Col>
       </Row>
-
       <Card title="По материалам" size="small">
         {bdData.length === 0
           ? <Empty description="Списаний пока нет" />
           : <Table dataSource={bdData} size="small" pagination={false}
               columns={[
-                { title: 'Материал', dataIndex: 'name' },
-                { title: 'Списано (м)', dataIndex: 'meters', align: 'right', render: v => v.toFixed(2) }
+                { title:'Материал', dataIndex:'name' },
+                { title:'Списано (м)', dataIndex:'meters', align:'right', render: v => v.toFixed(2) }
               ]}
             />
         }
       </Card>
-
       <Card title="История списаний" size="small">
         {histData.length === 0
           ? <Empty description="История пуста" />
@@ -499,7 +479,7 @@ function SummaryTab({ state }) {
   );
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────
+// ── Main app ──────────────────────────────────────────────────────
 function WarehouseApp() {
   const [state, setStateRaw] = useState(loadLocal);
   const [syncStatus, setSyncStatus] = useState('');
@@ -520,7 +500,8 @@ function WarehouseApp() {
       if (result === 'loaded') {
         setStateRaw(data); saveLocal(data); setSyncStatus('Синхронизировано');
       } else if (result === 'empty') {
-        saveCloud(loadLocal()).then(() => setSyncStatus('Синхронизировано'));
+        const local = loadLocal();
+        saveCloud(local).then(() => setSyncStatus('Синхронизировано'));
       } else {
         setSyncStatus('Облако недоступно');
       }
@@ -534,37 +515,37 @@ function WarehouseApp() {
   }, []);
 
   const tabs = [
-    { key: 'materials', label: 'Материалы',  children: <MaterialsTab  state={state} onSave={onSave} /> },
-    { key: 'products',  label: 'Изделия',     children: <ProductsTab   state={state} onSave={onSave} /> },
-    { key: 'writeoffs', label: 'Списания',    children: <WriteoffsTab  state={state} onSave={onSave} /> },
-    { key: 'summary',   label: 'Итог',        children: <SummaryTab    state={state} /> },
+    { key:'materials', tab:'Материалы',  children: <MaterialsTab  state={state} onSave={onSave} /> },
+    { key:'products',  tab:'Изделия',    children: <ProductsTab   state={state} onSave={onSave} /> },
+    { key:'writeoffs', tab:'Списания',   children: <WriteoffsTab  state={state} onSave={onSave} /> },
+    { key:'summary',   tab:'Итог',       children: <SummaryTab    state={state} /> },
   ];
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 16px 80px' }}>
-      <div style={{ padding: '20px 0 8px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+    <div style={{ maxWidth:800, margin:'0 auto', padding:'0 16px 80px' }}>
+      <div style={{ padding:'20px 0 4px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <Typography.Title level={4} style={{ margin:0 }}>Склад</Typography.Title>
         <Typography.Text type="secondary" style={{ fontSize:11 }}>{syncStatus}</Typography.Text>
       </div>
-      <Tabs items={tabs} />
+      <Tabs>
+        {tabs.map(t => (
+          <Tabs.TabPane key={t.key} tab={t.tab}>
+            {t.children}
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
     </div>
   );
 }
 
-// ── Root ──────────────────────────────────────────────────────────────────
+// ── Root ──────────────────────────────────────────────────────────
 function Root() {
   const [authed, setAuthed] = useState(sessionStorage.getItem('sklad-auth') === '1');
   if (!authed) return <AuthScreen onLogin={() => setAuthed(true)} />;
-  return (
-    <ConfigProvider theme={{ token: { colorPrimary: '#c0392b' } }}>
-      <App>
-        <WarehouseApp />
-      </App>
-    </ConfigProvider>
-  );
+  return <WarehouseApp />;
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+ReactDOM.render(<Root />, document.getElementById('root'));
 </script>
 </body>
 </html>
