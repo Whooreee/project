@@ -1,11 +1,17 @@
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function matLabel(m) {
+function matBaseLabel(m) {
   if (!m) return '—';
   return m.type === 'pipe'
     ? `Труба Ø${m.diameter}×${m.wall}`
     : `Профиль ${m.height}×${m.width}×${m.wall}`;
+}
+
+function matLabel(m) {
+  if (!m) return '—';
+  const parts = [matBaseLabel(m), m.surface, m.grade].filter(Boolean);
+  return parts.join(' · ');
 }
 
 function normalizeState(s) {

@@ -2,9 +2,11 @@ function addMaterial() {
   const type = cselValue('mat-type');
   const wall = parseFloat(document.getElementById('mat-wall').value);
   const stock = parseFloat(document.getElementById('mat-stock').value) || 0;
+  const surface = document.getElementById('mat-surface').value.trim();
+  const grade = document.getElementById('mat-grade').value.trim();
   const errEl = document.getElementById('mat-err');
   if (!wall || wall <= 0) { errEl.textContent = 'Укажите толщину стенки'; return; }
-  const mat = { id: genId(), type, wall, stock, peakStock: stock };
+  const mat = { id: genId(), type, wall, stock, peakStock: stock, surface, grade };
   if (type === 'pipe') {
     const d = parseFloat(document.getElementById('mat-diameter').value);
     if (!d || d <= 0) { errEl.textContent = 'Укажите диаметр'; return; }
@@ -18,7 +20,7 @@ function addMaterial() {
   errEl.textContent = '';
   state.materials.push(mat);
   save();
-  ['mat-diameter','mat-wall','mat-stock','mat-height','mat-width'].forEach(id => {
+  ['mat-diameter','mat-wall','mat-stock','mat-height','mat-width','mat-surface','mat-grade'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
 }
@@ -53,7 +55,11 @@ function renderMaterials() {
   const rows = page.map(m => `
     <tr id="mr-${m.id}">
       <td><span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}">${m.type==='pipe'?'Труба':'Профиль'}</span></td>
-      <td class="mat-tbl-name">${esc(matLabel(m))}</td>
+      <td class="mat-tbl-name">
+        ${esc(matBaseLabel(m))}
+        ${m.surface ? `<span class="mat-chip">${esc(m.surface)}</span>` : ''}
+        ${m.grade   ? `<span class="mat-chip">${esc(m.grade)}</span>`   : ''}
+      </td>
       <td class="mat-tbl-stock"><span class="mat-tbl-stock-val">${m.stock.toFixed(2)}</span> <span class="mat-tbl-unit">м</span></td>
       <td class="mat-tbl-actions">
         <button class="btn-icon" data-edit-mat="${m.id}" title="Изменить">${svgEdit()}</button>
@@ -63,7 +69,9 @@ function renderMaterials() {
     <tr class="mat-edit-tr" id="me-${m.id}" style="display:none">
       <td colspan="4">
         <div class="mat-edit-inline">
-          <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Введите остаток" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
+          <input type="text"   id="mei-surface-${m.id}" value="${esc(m.surface||'')}" placeholder="Поверхность">
+          <input type="text"   id="mei-grade-${m.id}"   value="${esc(m.grade||'')}"   placeholder="Марка стали">
+          <input type="number" id="mei-${m.id}"         value="${m.stock}" min="0" step="0.01" placeholder="Остаток (м)" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
           <button class="btn btn-primary btn-sm" data-save-mat="${m.id}">Сохранить</button>
           <button class="btn btn-ghost btn-sm" data-cancel-mat="${m.id}">Отмена</button>
         </div>
@@ -117,11 +125,15 @@ function cancelEditMat(id) { document.getElementById('me-' + id).style.display =
 function askSaveMat(id) {
   const val = parseFloat(document.getElementById('mei-' + id).value);
   if (isNaN(val) || val < 0) return;
-  showModal('Изменить остаток', `Установить остаток: <b>${val.toFixed(2)} м</b>?`, () => {
-    const m = state.materials.find(m => m.id === id);
+  const surface = document.getElementById('mei-surface-' + id).value.trim();
+  const grade   = document.getElementById('mei-grade-' + id).value.trim();
+  const m = state.materials.find(m => m.id === id);
+  showModal('Изменить материал', `Сохранить изменения для <b>${esc(matBaseLabel(m))}</b>?`, () => {
     if (m) {
       m.peakStock = val;
       m.stock = val;
+      m.surface = surface;
+      m.grade = grade;
       save();
     }
   }, 'Сохранить');
