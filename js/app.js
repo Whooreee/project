@@ -53,11 +53,10 @@ async function initApp() {
   setSyncStatus(false, 'Синхронизация...');
   loadLocal();
 
-  const tagIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
   document.getElementById('mat-type-wrap').innerHTML = cselHtml(
     'mat-type',
     [{v:'pipe',l:'Труба'},{v:'profile',l:'Профиль'}],
-    'pipe', 'Тип', tagIcon
+    'pipe', 'Тип'
   );
   cselOnChange('mat-type', updateMatFields);
   updateMatFields('pipe');

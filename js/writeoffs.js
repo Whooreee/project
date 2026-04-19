@@ -6,22 +6,16 @@ function renderWoItems() {
     return;
   }
   const prodOpts = state.products.map(p => ({ v: p.id, l: p.name }));
-  const tagIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
-  const listIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;
-
   el.innerHTML = woItems.map((item, i) => `
     <div class="wo-item-row">
       <div class="field">
         <label>Изделие</label>
-        ${cselHtml('wo-prod-' + i, prodOpts, item.prodId, 'Выберите изделие', tagIcon)}
+        ${cselHtml('wo-prod-' + i, prodOpts, item.prodId, 'Выберите изделие')}
       </div>
       <div class="field narrow">
         <label>Кол-во (шт)</label>
-        <div class="input-wrap">
-          <span class="ico">${listIcon}</span>
-          <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="Введите кол-во"
-            oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
-        </div>
+        <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="Введите кол-во"
+          oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
       </div>
       ${woItems.length > 1 ? `<div style="padding-bottom:2px"><button class="btn btn-danger btn-sm" onclick="removeWoItem(${i})">✕</button></div>` : ''}
     </div>

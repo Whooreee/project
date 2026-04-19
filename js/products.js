@@ -2,9 +2,8 @@ function renderProdMatSelect() {
   const wrap = document.getElementById('prod-mat-select-wrap');
   if (!wrap) return;
   const opts = state.materials.map(m => ({ v: m.id, l: matLabel(m) }));
-  const iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`;
   if (!document.getElementById('csel-prod-mat')) {
-    wrap.innerHTML = cselHtml('prod-mat', opts, opts[0]?.v || '', 'Выберите материал', iconSvg);
+    wrap.innerHTML = cselHtml('prod-mat', opts, opts[0]?.v || '', 'Выберите материал');
   } else {
     cselSetOptions('prod-mat', opts);
   }
