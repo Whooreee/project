@@ -21,7 +21,8 @@
 .input-wrap input, .input-wrap select { padding-left: 32px; padding-right: var(--ctrl-px); width: 100%; }
 
 /* ── Custom select ─────────────────────────────────────────────────────── */
-.csel { position: relative; user-select: none; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); font-size: var(--ctrl-fs); color: var(--text); outline: none; cursor: pointer; display: flex; align-items: center; width: 100%; height: var(--ctrl-h); padding: 0 32px; transition: border-color .13s, box-shadow .13s; box-sizing: border-box; }
+.csel { position: relative; user-select: none; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); font-size: var(--ctrl-fs); color: var(--text); outline: none; cursor: pointer; display: flex; align-items: center; width: 100%; height: var(--ctrl-h); padding: 0 32px 0 var(--ctrl-px); transition: border-color .13s, box-shadow .13s; box-sizing: border-box; }
+.csel:has(.csel-ico) { padding-left: 32px; }
 .csel:focus { outline: none; border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,.05); }
 .csel-val { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .csel-val.empty { color: var(--text3); }
