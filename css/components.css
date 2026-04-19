@@ -6,10 +6,10 @@
 .mat-table tbody tr:last-child { border-bottom: none; }
 .mat-table tbody tr:hover { background: var(--bg-soft); }
 .mat-table td { padding: 11px 14px; vertical-align: middle; }
-.mat-tbl-name { font-weight: 500; color: var(--text); }
+.mat-tbl-name { color: var(--text); }
 .mat-tbl-stock { white-space: nowrap; }
-.mat-tbl-stock-val { font-weight: 700; font-size: 14px; }
-.mat-tbl-unit { font-size: 11px; color: var(--text3); margin-left: 2px; }
+.mat-tbl-stock-val { }
+.mat-tbl-unit { color: var(--text3); margin-left: 2px; }
 .mat-tbl-actions { width: 1%; white-space: nowrap; text-align: right; }
 
 .btn-icon { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: none; background: none; border-radius: var(--r); cursor: pointer; color: var(--text3); transition: color 0.13s, background 0.13s; }
