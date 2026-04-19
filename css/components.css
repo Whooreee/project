@@ -41,6 +41,18 @@
 .btn-page[disabled] { opacity: 0.35; cursor: default; }
 .mat-page-info { font-size: 12px; color: var(--text3); padding: 0 4px; }
 
+/* ── Series groups ─────────────────────────────────────────────────────── */
+.series-list-wrap { border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.series-group { border-bottom: 1px solid var(--border); }
+.series-group:last-child { border-bottom: none; }
+.series-header { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; user-select: none; background: var(--bg); transition: background 0.13s; }
+.series-header:hover { background: var(--bg-soft); }
+.series-arrow { font-size: 10px; color: var(--text3); width: 12px; flex-shrink: 0; }
+.series-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+.series-count { font-size: 12px; color: var(--text3); }
+.series-body { border-top: 1px solid var(--border); }
+.series-body .mat-table tbody tr:last-child { border-bottom: none; }
+
 /* ── Product cards ─────────────────────────────────────────────────────── */
 .prod-list { display: flex; flex-direction: column; gap: 8px; }
 .prod-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; }

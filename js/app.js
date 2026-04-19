@@ -20,10 +20,12 @@ function initEventDelegation() {
     if (cancelBtn) cancelEditMat(cancelBtn.dataset.cancelMat);
   });
   document.getElementById('products-list').addEventListener('click', e => {
-    const editBtn = e.target.closest('[data-edit-prod]');
-    const delBtn  = e.target.closest('[data-del-prod]');
-    if (editBtn) startEditProduct(editBtn.dataset.editProd);
-    if (delBtn)  askDeleteProduct(delBtn.dataset.delProd);
+    const toggleBtn = e.target.closest('[data-toggle-series]');
+    const editBtn   = e.target.closest('[data-edit-prod]');
+    const delBtn    = e.target.closest('[data-del-prod]');
+    if (toggleBtn) toggleSeries(toggleBtn.dataset.toggleSeries);
+    if (editBtn)   startEditProduct(editBtn.dataset.editProd);
+    if (delBtn)    askDeleteProduct(delBtn.dataset.delProd);
   });
 }
 

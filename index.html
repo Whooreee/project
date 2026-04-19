@@ -51,66 +51,59 @@
 
   <!-- ═══ СКЛАД ════════════════════════════════════════════════════════ -->
   <div id="tab-sklad" class="tab-pane active">
-    <div class="two-col">
-      <div class="col-main">
+    <div style="padding-top:28px">
 
-        <div class="form-block">
-          <div class="section-label" style="margin-bottom:16px">Добавить материал</div>
-          <div class="form-grid">
-            <div class="field narrow">
-              <label>Тип</label>
-              <div id="mat-type-wrap"></div>
-            </div>
-            <div class="field" id="f-diam">
-              <label>Диаметр (мм)</label>
-              <div class="input-wrap">
-                <input type="number" id="mat-diameter" placeholder="Введите диаметр" min="0">
-              </div>
-            </div>
-            <div class="field" id="f-h" style="display:none">
-              <label>Высота (мм)</label>
-              <div class="input-wrap">
-                <input type="number" id="mat-height" placeholder="Введите высоту" min="0">
-              </div>
-            </div>
-            <div class="field" id="f-w" style="display:none">
-              <label>Ширина (мм)</label>
-              <div class="input-wrap">
-                <input type="number" id="mat-width" placeholder="Введите ширину" min="0">
-              </div>
+      <div class="form-block">
+        <div class="section-label" style="margin-bottom:16px">Добавить материал</div>
+        <div class="form-grid">
+          <div class="field narrow">
+            <label>Тип</label>
+            <div id="mat-type-wrap"></div>
+          </div>
+          <div class="field" id="f-diam">
+            <label>Диаметр (мм)</label>
+            <div class="input-wrap">
+              <input type="number" id="mat-diameter" placeholder="Введите диаметр" min="0">
             </div>
           </div>
-          <div class="form-grid">
-            <div class="field">
-              <label>Стенка (мм)</label>
-              <div class="input-wrap">
-                <input type="number" id="mat-wall" placeholder="Введите толщину" min="0" step="0.1">
-              </div>
-            </div>
-            <div class="field">
-              <label>Остаток (м)</label>
-              <div class="input-wrap">
-                <input type="number" id="mat-stock" placeholder="Введите остаток" min="0" step="0.01">
-              </div>
+          <div class="field" id="f-h" style="display:none">
+            <label>Высота (мм)</label>
+            <div class="input-wrap">
+              <input type="number" id="mat-height" placeholder="Введите высоту" min="0">
             </div>
           </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" onclick="addMaterial()">+ Добавить материал</button>
-            <div id="mat-err" class="err"></div>
+          <div class="field" id="f-w" style="display:none">
+            <label>Ширина (мм)</label>
+            <div class="input-wrap">
+              <input type="number" id="mat-width" placeholder="Введите ширину" min="0">
+            </div>
           </div>
         </div>
-
-        <div class="section">
-          <div class="section-head">
-            <div class="section-label">Материалы</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Стенка (мм)</label>
+            <div class="input-wrap">
+              <input type="number" id="mat-wall" placeholder="Введите толщину" min="0" step="0.1">
+            </div>
           </div>
-          <div id="materials-list" class="mat-list"></div>
+          <div class="field">
+            <label>Остаток (м)</label>
+            <div class="input-wrap">
+              <input type="number" id="mat-stock" placeholder="Введите остаток" min="0" step="0.01">
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="addMaterial()">+ Добавить материал</button>
+          <div id="mat-err" class="err"></div>
         </div>
       </div>
 
-      <div class="island" style="display:none">
-        <div class="island-title">Складской остаток</div>
-        <div id="island-mats-1"></div>
+      <div class="section">
+        <div class="section-head">
+          <div class="section-label">Материалы</div>
+        </div>
+        <div id="materials-list" class="mat-list"></div>
       </div>
     </div>
   </div>
@@ -127,6 +120,13 @@
               <label>Название</label>
               <div class="input-wrap">
                 <input type="text" id="prod-name" placeholder="Введите название">
+              </div>
+            </div>
+            <div class="field" style="min-width:180px">
+              <label>Серия / линейка</label>
+              <div class="input-wrap">
+                <input type="text" id="prod-series" placeholder="Например: GSK25" list="series-datalist" autocomplete="off">
+                <datalist id="series-datalist"></datalist>
               </div>
             </div>
           </div>

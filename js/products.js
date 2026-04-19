@@ -1,3 +1,5 @@
+let expandedSeries = new Set();
+
 function renderProdMatSelect() {
   const wrap = document.getElementById('prod-mat-select-wrap');
   if (!wrap) return;
@@ -34,89 +36,136 @@ function renderNewProdMats() {
   }).join('');
 }
 
+function getSeriesList() {
+  return [...new Set(state.products.map(p => (p.series || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
+}
+
+function updateSeriesDatalist() {
+  const dl = document.getElementById('series-datalist');
+  if (!dl) return;
+  dl.innerHTML = getSeriesList().map(s => `<option value="${esc(s)}">`).join('');
+}
+
 function addProduct() {
   const name = document.getElementById('prod-name').value.trim();
+  const series = document.getElementById('prod-series').value.trim();
   const errEl = document.getElementById('prod-err');
   if (!name) { errEl.textContent = 'Укажите название'; return; }
   if (!newProdMats.length) { errEl.textContent = 'Добавьте хотя бы один материал'; return; }
   errEl.textContent = '';
-  state.products.push({ id: genId(), name, materials: [...newProdMats] });
+  state.products.push({ id: genId(), name, series, materials: [...newProdMats] });
   newProdMats = [];
   document.getElementById('prod-name').value = '';
+  document.getElementById('prod-series').value = '';
   renderNewProdMats();
   save();
 }
 
-let prodPage = 0;
-let prodPerPage = 10;
 let prodSearch = '';
+
+function pluralIzd(n) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'изделие';
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'изделия';
+  return 'изделий';
+}
+
+function toggleSeries(key) {
+  if (expandedSeries.has(key)) expandedSeries.delete(key);
+  else expandedSeries.add(key);
+  renderProducts();
+}
 
 function renderProducts() {
   const el = document.getElementById('products-list');
-  if (!state.products.length) { el.innerHTML = '<div class="empty">Нет изделий — создайте первое</div>'; return; }
+  if (!state.products.length) {
+    el.innerHTML = '<div class="empty">Нет изделий — создайте первое</div>';
+    return;
+  }
 
+  updateSeriesDatalist();
   const q = prodSearch.toLowerCase();
-  const filtered = q ? state.products.filter(p => p.name.toLowerCase().includes(q)) : state.products;
-  const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / prodPerPage));
-  if (prodPage >= totalPages) prodPage = Math.max(0, totalPages - 1);
-  const start = prodPage * prodPerPage;
-  const page = filtered.slice(start, start + prodPerPage);
 
-  const perPageOptions = [5, 10, 25, 50].map(n =>
-    `<option value="${n}"${n === prodPerPage ? ' selected' : ''}>${n}</option>`
-  ).join('');
+  const groups = {};
+  state.products.forEach(p => {
+    const key = (p.series || '').trim();
+    if (!groups[key]) groups[key] = [];
+    const match = !q || p.name.toLowerCase().includes(q) || key.toLowerCase().includes(q);
+    if (match) groups[key].push(p);
+  });
 
-  const rows = page.map(p => {
-    const visibleMats = p.materials.filter(x => state.materials.find(m => m.id === x.matId));
-    const matsHtml = visibleMats.length
-      ? visibleMats.map(x => {
-          const m = state.materials.find(m => m.id === x.matId);
-          return `<div class="prod-tbl-mat">${esc(matLabel(m))} <span class="prod-tbl-qty">${x.qty} м</span></div>`;
-        }).join('')
-      : '<span class="prod-tbl-no-mats">—</span>';
-    return `<tr>
-      <td class="mat-tbl-name">${esc(p.name)}</td>
-      <td class="prod-tbl-mats">${matsHtml}</td>
-      <td class="mat-tbl-actions">
-        <button class="btn-icon" data-edit-prod="${p.id}" title="Редактировать">${svgEdit()}</button>
-        <button class="btn-icon btn-icon-danger" data-del-prod="${p.id}" title="Удалить">${svgTrash()}</button>
-      </td>
-    </tr>`;
-  }).join('');
+  const keys = Object.keys(groups)
+    .filter(k => groups[k].length > 0)
+    .sort((a, b) => {
+      if (!a) return 1;
+      if (!b) return -1;
+      return a.localeCompare(b, 'ru');
+    });
 
-  const from = total ? start + 1 : 0;
-  const to = Math.min(start + prodPerPage, total);
-  const paginationBtns = totalPages > 1 ? `
-    <button class="btn-page" onclick="setProdPage(0)" ${prodPage===0?'disabled':''}>«</button>
-    <button class="btn-page" onclick="setProdPage(${prodPage-1})" ${prodPage===0?'disabled':''}>‹</button>
-    <span class="mat-page-info">${prodPage+1} / ${totalPages}</span>
-    <button class="btn-page" onclick="setProdPage(${prodPage+1})" ${prodPage>=totalPages-1?'disabled':''}>›</button>
-    <button class="btn-page" onclick="setProdPage(${totalPages-1})" ${prodPage>=totalPages-1?'disabled':''}>»</button>
-  ` : '';
+  if (q) keys.forEach(k => expandedSeries.add(k));
+
+  let innerHtml;
+  if (!keys.length) {
+    innerHtml = '<div class="tbl-empty">Ничего не найдено</div>';
+  } else {
+    innerHtml = keys.map(key => {
+      const products = groups[key];
+      const displayName = key || 'Без серии';
+      const isExpanded = expandedSeries.has(key);
+
+      const rowsHtml = products.map(p => {
+        const visibleMats = p.materials.filter(x => state.materials.find(m => m.id === x.matId));
+        const matsHtml = visibleMats.length
+          ? visibleMats.map(x => {
+              const m = state.materials.find(m => m.id === x.matId);
+              return `<div class="prod-tbl-mat">${esc(matLabel(m))} <span class="prod-tbl-qty">${x.qty} м</span></div>`;
+            }).join('')
+          : '<span class="prod-tbl-no-mats">—</span>';
+        return `<tr>
+          <td class="mat-tbl-name">${esc(p.name)}</td>
+          <td class="prod-tbl-mats">${matsHtml}</td>
+          <td class="mat-tbl-actions">
+            <button class="btn-icon" data-edit-prod="${p.id}" title="Редактировать">${svgEdit()}</button>
+            <button class="btn-icon btn-icon-danger" data-del-prod="${p.id}" title="Удалить">${svgTrash()}</button>
+          </td>
+        </tr>`;
+      }).join('');
+
+      const bodyHtml = isExpanded ? `<div class="series-body">
+        <table class="mat-table">
+          <thead><tr><th>Название</th><th>Состав</th><th></th></tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>` : '';
+
+      return `<div class="series-group">
+        <div class="series-header" data-toggle-series="${esc(key)}">
+          <span class="series-arrow">${isExpanded ? '▼' : '▶'}</span>
+          <span class="series-name">${esc(displayName)}</span>
+          <span class="series-count">${products.length} ${pluralIzd(products.length)}</span>
+        </div>
+        ${bodyHtml}
+      </div>`;
+    }).join('');
+  }
 
   el.innerHTML = `
-    <div class="mat-tbl-wrap">
+    <div class="series-list-wrap">
       <div class="tbl-search-bar">
         <div class="tbl-total-inline">Всего изделий: ${state.products.length}</div>
         <input class="tbl-search-input" type="text" placeholder="Поиск..." value="${esc(prodSearch)}" oninput="setProdSearch(this.value)">
       </div>
-      <table class="mat-table">
-        <thead><tr><th>Название</th><th>Состав</th><th></th></tr></thead>
-        <tbody>${rows || '<tr><td colspan="3" class="tbl-empty">Ничего не найдено</td></tr>'}</tbody>
-      </table>
-      <div class="mat-tbl-footer">
-        <div class="mat-tbl-perpage">Показывать: <select onchange="setProdPerPage(+this.value)">${perPageOptions}</select></div>
-        <div class="mat-tbl-info">${from}–${to} из ${total}</div>
-        <div class="mat-tbl-pages">${paginationBtns}</div>
-      </div>
+      ${innerHtml}
     </div>
   `;
 }
 
-function setProdPage(p) { prodPage = p; renderProducts(); }
-function setProdPerPage(n) { prodPerPage = n; prodPage = 0; renderProducts(); }
-function setProdSearch(q) { prodSearch = q; prodPage = 0; renderProducts(); const inp = document.querySelector('#products-list .tbl-search-input'); if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); } }
+function setProdSearch(q) {
+  prodSearch = q;
+  renderProducts();
+  const inp = document.querySelector('#products-list .tbl-search-input');
+  if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); }
+}
 
 function askDeleteProduct(id) {
   const p = state.products.find(p => p.id === id);
@@ -131,10 +180,15 @@ function startEditProduct(id) {
   if (!p) return;
   editProdMats = p.materials.map(x => ({ ...x }));
   const matOpts = state.materials.map(m => ({ v: m.id, l: matLabel(m) }));
+  const seriesOpts = getSeriesList().map(s => `<option value="${esc(s)}">`).join('');
 
+  const labelStyle = 'display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px';
   const bodyHtml = `
-    <label style="display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Название</label>
+    <label style="${labelStyle}">Название</label>
     <input id="edit-prod-name" value="${esc(p.name)}" placeholder="Название изделия">
+    <label style="${labelStyle};margin-top:12px">Серия / линейка</label>
+    <input id="edit-prod-series" value="${esc(p.series || '')}" placeholder="Введите серию" list="edit-series-datalist" autocomplete="off">
+    <datalist id="edit-series-datalist">${seriesOpts}</datalist>
     <div style="margin-top:14px;margin-bottom:6px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Состав</div>
     <div id="edit-prod-mats">${editProdMats.map(x => {
       const m = state.materials.find(m => m.id === x.matId);
@@ -154,7 +208,11 @@ function startEditProduct(id) {
     const newName = document.getElementById('edit-prod-name')?.value.trim();
     if (!newName) return;
     const idx = state.products.findIndex(p => p.id === id);
-    if (idx >= 0) { state.products[idx].name = newName; state.products[idx].materials = [...editProdMats]; }
+    if (idx >= 0) {
+      state.products[idx].name = newName;
+      state.products[idx].series = document.getElementById('edit-prod-series')?.value.trim() || '';
+      state.products[idx].materials = [...editProdMats];
+    }
     save();
   }, 'Сохранить');
 }
