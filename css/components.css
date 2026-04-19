@@ -68,7 +68,7 @@
   .header-title { font-size: 20px; }
   .tab-btn { padding: 8px 14px; font-size: 12px; }
   .two-col { padding-top: 18px; gap: 18px; }
-  .form-block { padding: 14px 14px 12px; }
+  .form-block { padding: 16px; }
   .form-grid { gap: 10px; }
   .field { min-width: 100%; }
   .field.narrow { max-width: 100%; }
