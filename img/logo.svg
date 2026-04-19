@@ -1,33 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 258 48">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278 48">
   <defs>
-    <linearGradient id="stripe-grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#D42B2B"/>
-      <stop offset="100%" stop-color="#A81818"/>
+    <linearGradient id="fl" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#B71C1C"/>
+      <stop offset="100%" stop-color="#EF5350"/>
     </linearGradient>
   </defs>
 
-  <!-- Left stripe -->
-  <polygon points="2,44 12,44 26,4 16,4" fill="url(#stripe-grad)"/>
-  <!-- Right stripe -->
-  <polygon points="16,44 26,44 40,4 30,4" fill="url(#stripe-grad)"/>
+  <!-- Flame 1 -->
+  <path d="M 2,44 L 12,44 L 21,4 L 15,4 Q 5,26 2,44 Z" fill="url(#fl)"/>
+  <!-- Flame 2 -->
+  <path d="M 16,44 L 26,44 L 35,4 L 29,4 Q 19,26 16,44 Z" fill="url(#fl)"/>
+  <!-- Flame 3 -->
+  <path d="M 30,44 L 40,44 L 49,4 L 43,4 Q 33,26 30,44 Z" fill="url(#fl)"/>
 
-  <!-- Tagline: тепло близко -->
+  <!-- Tagline -->
   <text
-    x="50" y="17"
+    x="58" y="17"
     font-family="Arial, Helvetica, sans-serif"
     font-size="9.5"
     font-style="italic"
-    font-weight="400"
     fill="#AAAAAA"
-    letter-spacing="0.4">тепло близко</text>
+    letter-spacing="0.5">тепло близко</text>
 
   <!-- Main title -->
   <text
-    x="50" y="41"
+    x="58" y="41"
     font-family="Arial, 'Arial Black', Helvetica, sans-serif"
-    font-size="23"
+    font-size="21"
     font-weight="800"
-    letter-spacing="-0.4">
-    <tspan fill="#1A1A2E">ПроксиТерм</tspan><tspan fill="#888888" font-weight="600" font-size="20">.Склад</tspan>
+    letter-spacing="-0.3">
+    <tspan fill="#1A1A2E">ПроксиТерм</tspan><tspan fill="#777" font-size="19" font-weight="600">.Склад</tspan>
   </text>
 </svg>
