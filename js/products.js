@@ -83,7 +83,7 @@ function startEditProduct(id) {
   const p = state.products.find(p => p.id === id);
   if (!p) return;
   editProdMats = p.materials.map(x => ({ ...x }));
-  const matOptions = state.materials.map(m => `<option value="${m.id}">${esc(matLabel(m))}</option>`).join('');
+  const matOpts = state.materials.map(m => ({ v: m.id, l: matLabel(m) }));
 
   const bodyHtml = `
     <label style="display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Название</label>
@@ -97,7 +97,7 @@ function startEditProduct(id) {
       </div>`;
     }).join('')}</div>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      <select id="edit-mat-sel" class="edit-ctrl" style="flex:1">${matOptions}</select>
+      <div style="flex:1;min-width:0">${cselHtml('edit-mat-sel', matOpts, matOpts[0]?.v || '', 'Выберите материал')}</div>
       <input type="number" id="edit-mat-qty" class="edit-ctrl" placeholder="м" min="0" step="0.01" style="width:80px">
       <button class="btn btn-secondary" onclick="addEditProdMat()">+</button>
     </div>
@@ -125,7 +125,7 @@ function refreshEditProdMats() {
 }
 
 function addEditProdMat() {
-  const matId = document.getElementById('edit-mat-sel')?.value;
+  const matId = cselValue('edit-mat-sel');
   const qty = parseFloat(document.getElementById('edit-mat-qty')?.value);
   if (!matId || !qty || qty <= 0) return;
   const i = editProdMats.findIndex(x => x.matId === matId);
