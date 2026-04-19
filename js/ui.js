@@ -11,7 +11,7 @@ function cselHtml(id, opts, value, placeholder, iconSvg) {
   ).join('');
   return `<div class="csel" id="csel-${id}" tabindex="0" data-csel="${id}">
     ${iconSvg ? `<span class="csel-ico">${iconSvg}</span>` : ''}
-    <span class="csel-val${isEmpty ? ' empty' : ''}">${esc(label)}</span>
+    <span class="csel-val${isEmpty ? ' csel-empty' : ''}">${esc(label)}</span>
     <span class="csel-arr">${ARROW_SVG}</span>
     <div class="csel-drop hidden">${optsHtml}</div>
   </div>`;
@@ -29,8 +29,8 @@ function cselSetOptions(id, opts) {
   const found = opts.find(o => o.v === val);
   const valEl = document.querySelector(`#csel-${id} .csel-val`);
   if (valEl) {
-    if (!found && val) { _csel[id].value = ''; valEl.textContent = _csel[id].placeholder || ''; valEl.classList.add('empty'); }
-    else if (found) { valEl.textContent = found.l; valEl.classList.remove('empty'); }
+    if (!found && val) { _csel[id].value = ''; valEl.textContent = _csel[id].placeholder || ''; valEl.classList.add('csel-empty'); }
+    else if (found) { valEl.textContent = found.l; valEl.classList.remove('csel-empty'); }
   }
 }
 
@@ -52,7 +52,7 @@ document.addEventListener('click', e => {
     if (wrap) {
       const found = data.opts.find(o => o.v === val);
       const valEl = wrap.querySelector('.csel-val');
-      if (valEl) { valEl.textContent = found ? found.l : val; valEl.classList.remove('empty'); }
+      if (valEl) { valEl.textContent = found ? found.l : val; valEl.classList.remove('csel-empty'); }
       wrap.classList.remove('open');
       wrap.querySelector('.csel-drop').classList.add('hidden');
       wrap.querySelectorAll('.csel-opt').forEach(o => o.classList.toggle('csel-selected', o.dataset.cselVal === val));
