@@ -142,12 +142,12 @@
               </div>
             </div>
           </div>
-          <div style="margin-bottom:12px">
+          <div style="margin-bottom:24px">
             <button class="btn btn-secondary" onclick="addMatToProduct()">+ Добавить материал в изделие</button>
           </div>
-          <div style="margin: 0 -16px; height:1px; background:var(--border);"></div>
+          <div style="margin: 0 -24px; height:1px; background:var(--border);"></div>
           <div id="prod-mats-list"></div>
-          <div class="form-actions">
+          <div class="form-actions" style="margin-top:24px">
             <button class="btn btn-primary" onclick="addProduct()">Создать изделие</button>
             <div id="prod-err" class="err"></div>
           </div>
@@ -173,9 +173,12 @@
     <div class="form-block" id="wo-form-block">
       <div class="section-label">Списание изделий</div>
       <div id="wo-items-list"></div>
-      <button class="btn btn-secondary wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
+      <div style="margin-bottom:24px">
+        <button class="btn btn-secondary wo-add-btn" onclick="addWoItem()">+ Добавить изделие</button>
+      </div>
+      <div style="margin: 0 -24px; height:1px; background:var(--border);"></div>
       <div id="wo-preview"></div>
-      <div class="form-actions">
+      <div class="form-actions" style="margin-top:24px">
         <button class="btn btn-primary" onclick="doWriteoff()">Списать</button>
         <div id="wo-err" class="err"></div>
         <div id="wo-ok" class="ok-msg"></div>
