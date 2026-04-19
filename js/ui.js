@@ -36,6 +36,13 @@ function cselSetOptions(id, opts) {
 
 function cselOnChange(id, fn) { if (_csel[id]) _csel[id].onChange = fn; }
 function cselValue(id) { return _csel[id] ? _csel[id].value : ''; }
+function cselReset(id, placeholder) {
+  if (!_csel[id]) return;
+  _csel[id].value = '';
+  const valEl = document.querySelector(`#csel-${id} .csel-val`);
+  if (valEl) { valEl.textContent = placeholder || ''; valEl.classList.add('csel-empty'); }
+  document.querySelectorAll(`#csel-${id} .csel-opt`).forEach(o => o.classList.remove('csel-selected'));
+}
 
 document.addEventListener('click', e => {
   const opt = e.target.closest('.csel-opt');

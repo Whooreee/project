@@ -5,6 +5,6 @@ const STORE_KEY = 'sklad-v1';
 let state = { materials: [], products: [], writeoffs: [] };
 let newProdMats  = [];
 let editProdMats = [];
-let woItems      = [{ prodId: '', qty: 1 }];
+let woItems      = [{ seriesKey: null, prodId: '', qty: 1 }];
 let modalCallback = null;
 let summaryDay = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();

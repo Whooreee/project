@@ -41,6 +41,10 @@
 .btn-page[disabled] { opacity: 0.35; cursor: default; }
 .mat-page-info { font-size: 12px; color: var(--text3); padding: 0 4px; }
 
+/* ── Datalist without arrow ────────────────────────────────────────────── */
+.input-no-list-arrow::-webkit-calendar-picker-indicator { display: none !important; }
+.input-no-list-arrow::-webkit-list-button { display: none !important; }
+
 /* ── Series groups ─────────────────────────────────────────────────────── */
 .series-list-wrap { border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
 .series-group { border-bottom: 1px solid var(--border); }

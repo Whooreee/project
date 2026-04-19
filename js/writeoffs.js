@@ -1,3 +1,9 @@
+function getWoSeriesOpts() {
+  const keys = [...new Set(state.products.map(p => (p.series || '').trim()))]
+    .sort((a, b) => { if (!a) return 1; if (!b) return -1; return a.localeCompare(b, 'ru'); });
+  return keys.map(k => ({ v: k, l: k || 'Без серии' }));
+}
+
 function renderWoItems() {
   const el = document.getElementById('wo-items-list');
   if (!state.products.length) {
@@ -5,9 +11,20 @@ function renderWoItems() {
     updateWoPreview();
     return;
   }
-  const prodOpts = state.products.map(p => ({ v: p.id, l: p.name }));
-  el.innerHTML = woItems.map((item, i) => `
-    <div class="wo-item-row">
+
+  const seriesOpts = getWoSeriesOpts();
+
+  el.innerHTML = woItems.map((item, i) => {
+    const seriesVal = item.seriesKey !== null ? item.seriesKey : '__unset__';
+    const prodOpts = item.seriesKey !== null
+      ? state.products.filter(p => (p.series || '').trim() === item.seriesKey).map(p => ({ v: p.id, l: p.name }))
+      : [];
+
+    return `<div class="wo-item-row">
+      <div class="field">
+        <label>Линейка</label>
+        ${cselHtml('wo-series-' + i, seriesOpts, seriesVal, 'Выберите линейку')}
+      </div>
       <div class="field">
         <label>Изделие</label>
         ${cselHtml('wo-prod-' + i, prodOpts, item.prodId, 'Выберите изделие')}
@@ -18,16 +35,26 @@ function renderWoItems() {
           oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
       </div>
       ${woItems.length > 1 ? `<div style="padding-bottom:2px"><button class="btn btn-danger btn-sm" onclick="removeWoItem(${i})">✕</button></div>` : ''}
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 
   woItems.forEach((item, i) => {
+    cselOnChange('wo-series-' + i, val => {
+      woItems[i].seriesKey = val;
+      woItems[i].prodId = '';
+      const newProdOpts = state.products
+        .filter(p => (p.series || '').trim() === val)
+        .map(p => ({ v: p.id, l: p.name }));
+      cselSetOptions('wo-prod-' + i, newProdOpts);
+      cselReset('wo-prod-' + i, 'Выберите изделие');
+      updateWoPreview();
+    });
     cselOnChange('wo-prod-' + i, val => { woItems[i].prodId = val; updateWoPreview(); });
   });
   updateWoPreview();
 }
 
-function addWoItem() { woItems.push({ prodId: '', qty: 1 }); renderWoItems(); }
+function addWoItem() { woItems.push({ seriesKey: null, prodId: '', qty: 1 }); renderWoItems(); }
 function removeWoItem(i) { woItems.splice(i, 1); renderWoItems(); }
 
 function updateWoPreview() {
@@ -107,7 +134,7 @@ function doWriteoff() {
     const p = state.products.find(p => p.id === x.prodId);
     return `${p?.name} × ${x.qty}`;
   }).join(', ');
-  woItems = [{ prodId: '', qty: 1 }];
+  woItems = [{ seriesKey: null, prodId: '', qty: 1 }];
   save();
   okEl.textContent = `Списано: ${names}`;
   setTimeout(() => okEl.textContent = '', 4000);
