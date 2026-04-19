@@ -65,7 +65,7 @@ function askSaveMat(id) {
   showModal('Изменить остаток', `Установить остаток: <b>${val.toFixed(2)} м</b>?`, () => {
     const m = state.materials.find(m => m.id === id);
     if (m) {
-      if (val > (m.peakStock || 0)) m.peakStock = val;
+      m.peakStock = val;
       m.stock = val;
       save();
     }
