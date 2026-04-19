@@ -1,0 +1,35 @@
+:root {
+  --bg: #FFFFFF;
+  --bg-soft: #F9F9F8;
+  --bg-hover: #F2F1EF;
+  --border: #EAEAE8;
+  --border-h: #D4D4D1;
+  --text: #1C1C1C;
+  --text2: #787774;
+  --text3: #B0ABA6;
+  --black: #1C1C1C;
+  --black-h: #37352F;
+  --danger: #EB5757;
+  --danger-bg: #FFF0F0;
+  --success: #27AE60;
+  --pipe: #4A90D9;
+  --profile: #5CB85C;
+  --r: 8px;
+  --r-lg: 12px;
+  --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.11);
+  --ctrl-h: 36px;
+  --ctrl-fs: 13px;
+  --ctrl-py: 8px;
+  --ctrl-px: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); font-size: 14px; line-height: 1.5; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+input, select, button, textarea { font-family: var(--font); }
+::placeholder { color: var(--text3); opacity: 1; }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }

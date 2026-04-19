@@ -1,0 +1,120 @@
+function renderWoItems() {
+  const el = document.getElementById('wo-items-list');
+  if (!state.products.length) {
+    el.innerHTML = '<div class="empty" style="margin-bottom:12px">Сначала создайте изделия</div>';
+    updateWoPreview();
+    return;
+  }
+  const prodOpts = state.products.map(p => ({ v: p.id, l: p.name }));
+  const tagIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
+  const listIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;
+
+  el.innerHTML = woItems.map((item, i) => `
+    <div class="wo-item-row">
+      <div class="field">
+        <label>Изделие</label>
+        ${cselHtml('wo-prod-' + i, prodOpts, item.prodId, 'Выберите изделие', tagIcon)}
+      </div>
+      <div class="field narrow">
+        <label>Кол-во (шт)</label>
+        <div class="input-wrap">
+          <span class="ico">${listIcon}</span>
+          <input type="number" min="1" step="1" value="${item.qty||''}" placeholder="Введите кол-во"
+            oninput="woItems[${i}].qty=parseFloat(this.value)||0;updateWoPreview()">
+        </div>
+      </div>
+      ${woItems.length > 1 ? `<div style="padding-bottom:2px"><button class="btn btn-danger btn-sm" onclick="removeWoItem(${i})">✕</button></div>` : ''}
+    </div>
+  `).join('');
+
+  woItems.forEach((item, i) => {
+    cselOnChange('wo-prod-' + i, val => { woItems[i].prodId = val; updateWoPreview(); });
+  });
+  updateWoPreview();
+}
+
+function addWoItem() { woItems.push({ prodId: '', qty: 1 }); renderWoItems(); }
+function removeWoItem(i) { woItems.splice(i, 1); renderWoItems(); }
+
+function updateWoPreview() {
+  const el = document.getElementById('wo-preview');
+  woItems.forEach((item, i) => {
+    const v = cselValue('wo-prod-' + i);
+    if (v) item.prodId = v;
+  });
+  const validItems = woItems.filter(x => x.prodId && x.qty > 0);
+  if (!validItems.length) { el.innerHTML = ''; return; }
+
+  const needs = {};
+  for (const item of validItems) {
+    const p = state.products.find(p => p.id === item.prodId);
+    if (!p) continue;
+    for (const x of p.materials) {
+      if (!needs[x.matId]) needs[x.matId] = 0;
+      needs[x.matId] += x.qty * item.qty;
+    }
+  }
+
+  let allOk = true;
+  const rows = validItems.map(item => {
+    const p = state.products.find(p => p.id === item.prodId);
+    if (!p) return '';
+    const matRows = p.materials.map(x => {
+      const m = state.materials.find(m => m.id === x.matId);
+      const total = x.qty * item.qty;
+      const ok = m && m.stock >= needs[x.matId];
+      if (!ok) allOk = false;
+      return `<div class="wo-preview-mat ${ok?'':'not-enough'}">${esc(matLabel(m))}: ${total.toFixed(2)} м${ok?'':' — недостаточно'}</div>`;
+    }).join('');
+    return `<div class="wo-preview-item"><b>${esc(p.name)} × ${item.qty} шт.</b></div>${matRows}`;
+  }).join('');
+
+  el.innerHTML = `<div class="wo-preview"><div class="wo-preview-title">Предварительный расчёт</div>${rows}</div>`;
+}
+
+function doWriteoff() {
+  const errEl = document.getElementById('wo-err');
+  const okEl  = document.getElementById('wo-ok');
+  errEl.textContent = ''; okEl.textContent = '';
+
+  woItems.forEach((item, i) => { const v = cselValue('wo-prod-' + i); if (v) item.prodId = v; });
+  const validItems = woItems.filter(x => x.prodId && x.qty > 0);
+  if (!validItems.length) { errEl.textContent = 'Добавьте хотя бы одно изделие'; return; }
+
+  const needs = {};
+  for (const item of validItems) {
+    const p = state.products.find(p => p.id === item.prodId);
+    if (!p) continue;
+    for (const x of p.materials) {
+      if (!needs[x.matId]) needs[x.matId] = 0;
+      needs[x.matId] += x.qty * item.qty;
+    }
+  }
+  for (const [matId, total] of Object.entries(needs)) {
+    const m = state.materials.find(m => m.id === matId);
+    if (!m || m.stock < total) { errEl.textContent = `Недостаточно материала: ${matLabel(m)}`; return; }
+  }
+
+  for (const [matId, total] of Object.entries(needs)) {
+    const m = state.materials.find(m => m.id === matId);
+    m.stock = Math.round((m.stock - total) * 1000) / 1000;
+  }
+
+  for (const item of validItems) {
+    const p = state.products.find(p => p.id === item.prodId);
+    const items = p.materials.map(x => {
+      const m = state.materials.find(m => m.id === x.matId);
+      return { materialId: x.matId, materialName: matLabel(m), meters: Math.round(x.qty * item.qty * 1000) / 1000 };
+    });
+    state.writeoffs.push({ id: genId(), productId: p.id, productName: p.name, quantity: item.qty, timestamp: Date.now(), items });
+  }
+
+  const names = validItems.map(x => {
+    const p = state.products.find(p => p.id === x.prodId);
+    return `${p?.name} × ${x.qty}`;
+  }).join(', ');
+  woItems = [{ prodId: '', qty: 1 }];
+  save();
+  okEl.textContent = `Списано: ${names}`;
+  setTimeout(() => okEl.textContent = '', 4000);
+}

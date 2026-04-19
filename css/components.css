@@ -1,0 +1,80 @@
+/* ── Material cards ────────────────────────────────────────────────────── */
+.mat-list { display: flex; flex-direction: column; gap: 10px; }
+.mat-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; transition: border-color 0.13s; }
+.mat-card:hover { border-color: var(--border-h); }
+.mat-card-top { display: flex; align-items: flex-start; gap: 12px; padding: 16px 18px; }
+.mat-card-info { flex: 1; min-width: 0; }
+.mat-card-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.mat-card-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: -2px; }
+.mat-card-stock { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.mat-card-unit { font-size: 12px; color: var(--text3); font-weight: 400; margin-left: 2px; }
+.mat-edit-row { display: flex; align-items: center; gap: 8px; padding: 0 18px 16px; }
+.mat-edit-row input { flex: 1; height: var(--ctrl-h); padding: 0 var(--ctrl-px); font-size: var(--ctrl-fs); border: 1px solid var(--border); border-radius: var(--r); outline: none; box-sizing: border-box; }
+.mat-edit-row input:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+
+/* ── Product cards ─────────────────────────────────────────────────────── */
+.prod-list { display: flex; flex-direction: column; gap: 8px; }
+.prod-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; }
+.prod-card:hover { border-color: var(--border-h); }
+.prod-card-top { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; }
+.prod-card-name { font-size: 14px; font-weight: 500; flex: 1; }
+.prod-card-body { padding: 0 16px 14px; border-top: 1px solid var(--border); padding-top: 10px; }
+.comp-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text2); padding: 3px 0; }
+.comp-val { font-weight: 500; color: var(--text); }
+.added-mat { display: flex; justify-content: space-between; align-items: center; padding: 7px 11px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 6px; font-size: 13px; color: var(--text2); }
+
+/* ── Writeoff form ─────────────────────────────────────────────────────── */
+.wo-item-row { display: flex; align-items: flex-end; gap: 10px; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); margin-bottom: 8px; flex-wrap: wrap; }
+.wo-item-row .field { min-width: 140px; }
+.wo-item-row .field.narrow { max-width: 100px; }
+.wo-preview { margin-top: 12px; padding: 14px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); }
+.wo-preview-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.wo-preview-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); padding: 3px 0; }
+.wo-preview-mat { font-size: 12px; color: var(--text3); padding: 2px 0 2px 12px; }
+.not-enough { color: var(--danger) !important; }
+.wo-add-btn { margin-bottom: 16px; }
+.wo-mat-chip { font-size: 11px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--text2); }
+
+/* ── Summary / Итог ────────────────────────────────────────────────────── */
+.stat-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+.stat-card { flex: 1; min-width: 120px; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg-soft); }
+.stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 6px; }
+.stat-val { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+.chart-section { margin-bottom: 28px; }
+.chart-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 14px; }
+.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+.chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.chart-bar-fill { width: 100%; border-radius: 4px 4px 0 0; background: var(--text); opacity: 0.12; min-height: 3px; transition: height 0.3s; }
+.chart-bar-fill.has-data { opacity: 0.85; background: var(--black); }
+.chart-day-label { font-size: 10px; color: var(--text3); text-align: center; }
+.chart-day-val { font-size: 11px; font-weight: 600; color: var(--text2); }
+
+/* ── Day navigation ────────────────────────────────────────────────────── */
+.day-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.day-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.day-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 2px solid var(--border); }
+.day-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+.day-table tbody tr:last-child td { border-bottom: none; }
+.day-table td:first-child { color: var(--text3); white-space: nowrap; }
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .two-col { grid-template-columns: 1fr; }
+  .island { position: static; }
+}
+@media (max-width: 600px) {
+  .app { padding: 0 14px 80px; }
+  .header { padding-top: 20px; margin-bottom: 14px; }
+  .header-title { font-size: 20px; }
+  .tab-btn { padding: 8px 14px; font-size: 12px; }
+  .two-col { padding-top: 18px; gap: 18px; }
+  .form-block { padding: 14px 14px 12px; }
+  .form-grid { gap: 10px; }
+  .field { min-width: 100%; }
+  .field.narrow { max-width: 100%; }
+  :root { --ctrl-h: 44px; --ctrl-fs: 16px; --ctrl-py: 10px; --ctrl-px: 14px; }
+  .btn-ghost, .btn-danger { height: 36px; font-size: 13px; }
+  .mat-card-stock { font-size: 17px; }
+  .stat-val { font-size: 22px; }
+  .wo-item-row .field { min-width: 100%; }
+}

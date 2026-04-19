@@ -1,0 +1,51 @@
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.btn { font-size: var(--ctrl-fs); font-weight: 500; padding: var(--ctrl-py) 16px; height: var(--ctrl-h); border-radius: var(--r); border: 1px solid transparent; cursor: pointer; transition: background 0.12s, border-color 0.12s, color 0.12s; line-height: 1; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; box-sizing: border-box; }
+.btn-primary { background: var(--black); color: #fff; border-color: var(--black); }
+.btn-primary:hover { background: var(--black-h); }
+.btn-secondary { background: var(--bg); color: var(--text); border-color: var(--border); }
+.btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-h); }
+.btn-ghost { background: transparent; color: var(--text2); border-color: transparent; }
+.btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+.btn-danger { background: transparent; color: var(--danger); border-color: transparent; }
+.btn-danger:hover { background: var(--danger-bg); }
+.btn-sm { height: 30px; padding: 0 10px; font-size: 12px; }
+
+/* ── Badge ─────────────────────────────────────────────────────────────── */
+.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.03em; }
+.badge-pipe { background: #E8F0FD; color: #2D6CC4; }
+.badge-profile { background: #E8F7EE; color: #1E7A3C; }
+
+/* ── Input wrap with icon ──────────────────────────────────────────────── */
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap .ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; line-height: 1; }
+.input-wrap input, .input-wrap select { padding-left: 32px; padding-right: var(--ctrl-px); width: 100%; }
+
+/* ── Custom select ─────────────────────────────────────────────────────── */
+.csel { position: relative; user-select: none; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); font-size: var(--ctrl-fs); color: var(--text); outline: none; cursor: pointer; display: flex; align-items: center; width: 100%; height: var(--ctrl-h); padding: 0 32px; transition: border-color .13s, box-shadow .13s; box-sizing: border-box; }
+.csel:focus { outline: none; border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,.05); }
+.csel-val { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.csel-val.empty { color: var(--text3); }
+.csel-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; }
+.csel-arr { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; display: flex; transition: transform .15s; }
+.csel.open .csel-arr { transform: translateY(-50%) rotate(180deg); }
+.csel-drop { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-lg); z-index: 100; max-height: 220px; overflow-y: auto; }
+.csel-drop.hidden { display: none; }
+.csel-opt { padding: 9px 14px; font-size: 13px; color: var(--text); cursor: pointer; }
+.csel-opt:hover { background: var(--bg-hover); }
+.csel-opt.csel-selected { font-weight: 500; background: var(--bg-soft); }
+
+/* ── Edit control (used inside modals) ─────────────────────────────────── */
+.edit-ctrl { height: var(--ctrl-h); padding: 0 var(--ctrl-px); font-size: var(--ctrl-fs); border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); color: var(--text); outline: none; box-sizing: border-box; font-family: var(--font); }
+.edit-ctrl:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+
+/* ── Field (label + input) ─────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 88px; }
+.field.narrow { max-width: 120px; }
+.field label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
+.field input, .field select { height: var(--ctrl-h); padding: 0 var(--ctrl-px); font-size: var(--ctrl-fs); border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); color: var(--text); outline: none; transition: border-color 0.13s, box-shadow 0.13s; box-sizing: border-box; }
+.field input:focus, .field select:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+
+/* ── Misc feedback ─────────────────────────────────────────────────────── */
+.err { font-size: 12px; color: var(--danger); margin-top: 0; min-height: 0; width: 100%; }
+.ok-msg { font-size: 12px; color: var(--success); margin-top: 0; min-height: 0; width: 100%; }
+.empty { padding: 28px 20px; text-align: center; color: var(--text3); font-size: 13px; border: 1px dashed var(--border); border-radius: var(--r-lg); }
