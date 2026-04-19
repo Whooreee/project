@@ -197,10 +197,10 @@ function startEditProduct(id) {
         <button class="btn btn-danger btn-sm" onclick="removeEditProdMat('${x.matId}')">✕</button>
       </div>`;
     }).join('')}</div>
-    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
       <div style="flex:1;min-width:0">${cselHtml('edit-mat-sel', matOpts, matOpts[0]?.v || '', 'Выберите материал')}</div>
-      <input type="number" id="edit-mat-qty" class="edit-ctrl" placeholder="м" min="0" step="0.01" style="width:80px">
-      <button class="btn btn-secondary" onclick="addEditProdMat()">+</button>
+      <input type="number" id="edit-mat-qty" class="edit-ctrl" placeholder="м" min="0" step="0.01" style="width:80px;margin-top:0">
+      <button class="btn btn-secondary" onclick="addEditProdMat()" style="flex-shrink:0">+</button>
     </div>
   `;
 
