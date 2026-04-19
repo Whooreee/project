@@ -98,6 +98,7 @@ function renderProducts() {
   el.innerHTML = `
     <div class="mat-tbl-wrap">
       <div class="tbl-search-bar">
+        <div class="tbl-total-inline">Всего изделий: ${state.products.length}</div>
         <input class="tbl-search-input" type="text" placeholder="Поиск..." value="${esc(prodSearch)}" oninput="setProdSearch(this.value)">
       </div>
       <table class="mat-table">
@@ -109,14 +110,13 @@ function renderProducts() {
         <div class="mat-tbl-info">${from}–${to} из ${total}</div>
         <div class="mat-tbl-pages">${paginationBtns}</div>
       </div>
-      <div class="tbl-total">Всего изделий: ${state.products.length}</div>
     </div>
   `;
 }
 
 function setProdPage(p) { prodPage = p; renderProducts(); }
 function setProdPerPage(n) { prodPerPage = n; prodPage = 0; renderProducts(); }
-function setProdSearch(q) { prodSearch = q; prodPage = 0; renderProducts(); }
+function setProdSearch(q) { prodSearch = q; prodPage = 0; renderProducts(); const inp = document.querySelector('#products-list .tbl-search-input'); if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); } }
 
 function askDeleteProduct(id) {
   const p = state.products.find(p => p.id === id);

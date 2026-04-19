@@ -84,6 +84,7 @@ function renderMaterials() {
   el.innerHTML = `
     <div class="mat-tbl-wrap">
       <div class="tbl-search-bar">
+        <div class="tbl-total-inline">Всего материалов: ${state.materials.length}</div>
         <input class="tbl-search-input" type="text" placeholder="Поиск..." value="${esc(matSearch)}" oninput="setMatSearch(this.value)">
       </div>
       <table class="mat-table">
@@ -97,14 +98,13 @@ function renderMaterials() {
         <div class="mat-tbl-info">${from}–${to} из ${total}</div>
         <div class="mat-tbl-pages">${paginationBtns}</div>
       </div>
-      <div class="tbl-total">Всего материалов: ${state.materials.length}</div>
     </div>
   `;
 }
 
 function setMatPage(p) { matPage = p; renderMaterials(); }
 function setMatPerPage(n) { matPerPage = n; matPage = 0; renderMaterials(); }
-function setMatSearch(q) { matSearch = q; matPage = 0; renderMaterials(); }
+function setMatSearch(q) { matSearch = q; matPage = 0; renderMaterials(); const inp = document.querySelector('#materials-list .tbl-search-input'); if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); } }
 
 function startEditMat(id) {
   document.getElementById('me-' + id).style.display = '';
