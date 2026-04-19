@@ -25,6 +25,7 @@ function addMaterial() {
 
 let matPage = 0;
 let matPerPage = 10;
+let matSearch = '';
 
 function svgEdit() {
   return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.333 2a1.886 1.886 0 0 1 2.667 2.667L5.5 13.167l-3.5.833.833-3.5L11.333 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -37,11 +38,13 @@ function renderMaterials() {
   const el = document.getElementById('materials-list');
   if (!state.materials.length) { el.innerHTML = '<div class="empty">Нет материалов — добавьте первый</div>'; return; }
 
-  const total = state.materials.length;
-  const totalPages = Math.ceil(total / matPerPage);
+  const q = matSearch.toLowerCase();
+  const filtered = q ? state.materials.filter(m => matLabel(m).toLowerCase().includes(q)) : state.materials;
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / matPerPage));
   if (matPage >= totalPages) matPage = Math.max(0, totalPages - 1);
   const start = matPage * matPerPage;
-  const page = state.materials.slice(start, start + matPerPage);
+  const page = filtered.slice(start, start + matPerPage);
 
   const perPageOptions = [5, 10, 25, 50].map(n =>
     `<option value="${n}"${n === matPerPage ? ' selected' : ''}>${n}</option>`
@@ -80,23 +83,28 @@ function renderMaterials() {
 
   el.innerHTML = `
     <div class="mat-tbl-wrap">
+      <div class="tbl-search-bar">
+        <input class="tbl-search-input" type="text" placeholder="Поиск..." value="${esc(matSearch)}" oninput="setMatSearch(this.value)">
+      </div>
       <table class="mat-table">
         <thead><tr>
           <th>Тип</th><th>Название</th><th>Остаток</th><th></th>
         </tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rows || '<tr><td colspan="4" class="tbl-empty">Ничего не найдено</td></tr>'}</tbody>
       </table>
       <div class="mat-tbl-footer">
         <div class="mat-tbl-perpage">Показывать: <select onchange="setMatPerPage(+this.value)">${perPageOptions}</select></div>
         <div class="mat-tbl-info">${from}–${to} из ${total}</div>
         <div class="mat-tbl-pages">${paginationBtns}</div>
       </div>
+      <div class="tbl-total">Всего материалов: ${state.materials.length}</div>
     </div>
   `;
 }
 
 function setMatPage(p) { matPage = p; renderMaterials(); }
 function setMatPerPage(n) { matPerPage = n; matPage = 0; renderMaterials(); }
+function setMatSearch(q) { matSearch = q; matPage = 0; renderMaterials(); }
 
 function startEditMat(id) {
   document.getElementById('me-' + id).style.display = '';

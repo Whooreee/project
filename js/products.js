@@ -47,29 +47,76 @@ function addProduct() {
   save();
 }
 
+let prodPage = 0;
+let prodPerPage = 10;
+let prodSearch = '';
+
 function renderProducts() {
   const el = document.getElementById('products-list');
   if (!state.products.length) { el.innerHTML = '<div class="empty">Нет изделий — создайте первое</div>'; return; }
-  el.innerHTML = state.products.map(p => {
+
+  const q = prodSearch.toLowerCase();
+  const filtered = q ? state.products.filter(p => p.name.toLowerCase().includes(q)) : state.products;
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / prodPerPage));
+  if (prodPage >= totalPages) prodPage = Math.max(0, totalPages - 1);
+  const start = prodPage * prodPerPage;
+  const page = filtered.slice(start, start + prodPerPage);
+
+  const perPageOptions = [5, 10, 25, 50].map(n =>
+    `<option value="${n}"${n === prodPerPage ? ' selected' : ''}>${n}</option>`
+  ).join('');
+
+  const rows = page.map(p => {
     const visibleMats = p.materials.filter(x => state.materials.find(m => m.id === x.matId));
-    return `
-    <div class="prod-card">
-      <div class="prod-card-top">
-        <div class="prod-card-name">${esc(p.name)}</div>
-        <div style="display:flex;gap:4px;flex-shrink:0;margin-top:-2px">
-          <button class="btn btn-ghost btn-sm" data-edit-prod="${p.id}">Редактировать</button>
-          <button class="btn btn-danger btn-sm" data-del-prod="${p.id}">Удалить</button>
-        </div>
-      </div>
-      ${visibleMats.length ? `<div class="prod-card-body">
-        ${visibleMats.map(x => {
+    const matsHtml = visibleMats.length
+      ? visibleMats.map(x => {
           const m = state.materials.find(m => m.id === x.matId);
-          return `<div class="comp-row"><span>${esc(matLabel(m))}</span><span class="comp-val">Расход: ${x.qty} м</span></div>`;
-        }).join('')}
-      </div>` : ''}
-    </div>`;
+          return `<div class="prod-tbl-mat">${esc(matLabel(m))} <span class="prod-tbl-qty">${x.qty} м</span></div>`;
+        }).join('')
+      : '<span class="prod-tbl-no-mats">—</span>';
+    return `<tr>
+      <td class="mat-tbl-name">${esc(p.name)}</td>
+      <td class="prod-tbl-mats">${matsHtml}</td>
+      <td class="mat-tbl-actions">
+        <button class="btn-icon" data-edit-prod="${p.id}" title="Редактировать">${svgEdit()}</button>
+        <button class="btn-icon btn-icon-danger" data-del-prod="${p.id}" title="Удалить">${svgTrash()}</button>
+      </td>
+    </tr>`;
   }).join('');
+
+  const from = total ? start + 1 : 0;
+  const to = Math.min(start + prodPerPage, total);
+  const paginationBtns = totalPages > 1 ? `
+    <button class="btn-page" onclick="setProdPage(0)" ${prodPage===0?'disabled':''}>«</button>
+    <button class="btn-page" onclick="setProdPage(${prodPage-1})" ${prodPage===0?'disabled':''}>‹</button>
+    <span class="mat-page-info">${prodPage+1} / ${totalPages}</span>
+    <button class="btn-page" onclick="setProdPage(${prodPage+1})" ${prodPage>=totalPages-1?'disabled':''}>›</button>
+    <button class="btn-page" onclick="setProdPage(${totalPages-1})" ${prodPage>=totalPages-1?'disabled':''}>»</button>
+  ` : '';
+
+  el.innerHTML = `
+    <div class="mat-tbl-wrap">
+      <div class="tbl-search-bar">
+        <input class="tbl-search-input" type="text" placeholder="Поиск..." value="${esc(prodSearch)}" oninput="setProdSearch(this.value)">
+      </div>
+      <table class="mat-table">
+        <thead><tr><th>Название</th><th>Состав</th><th></th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="3" class="tbl-empty">Ничего не найдено</td></tr>'}</tbody>
+      </table>
+      <div class="mat-tbl-footer">
+        <div class="mat-tbl-perpage">Показывать: <select onchange="setProdPerPage(+this.value)">${perPageOptions}</select></div>
+        <div class="mat-tbl-info">${from}–${to} из ${total}</div>
+        <div class="mat-tbl-pages">${paginationBtns}</div>
+      </div>
+      <div class="tbl-total">Всего изделий: ${state.products.length}</div>
+    </div>
+  `;
 }
+
+function setProdPage(p) { prodPage = p; renderProducts(); }
+function setProdPerPage(n) { prodPerPage = n; prodPage = 0; renderProducts(); }
+function setProdSearch(q) { prodSearch = q; prodPage = 0; renderProducts(); }
 
 function askDeleteProduct(id) {
   const p = state.products.find(p => p.id === id);
