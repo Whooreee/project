@@ -1,16 +1,35 @@
-/* ── Material cards ────────────────────────────────────────────────────── */
-.mat-list { display: flex; flex-direction: column; gap: 10px; }
-.mat-card { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg); overflow: hidden; transition: border-color 0.13s; }
-.mat-card:hover { border-color: var(--border-h); }
-.mat-card-top { display: flex; align-items: flex-start; gap: 12px; padding: 16px 18px; }
-.mat-card-info { flex: 1; min-width: 0; }
-.mat-card-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-.mat-card-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: -2px; }
-.mat-card-stock { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-.mat-card-unit { font-size: 12px; color: var(--text3); font-weight: 400; margin-left: 2px; }
-.mat-edit-row { display: flex; align-items: center; gap: 8px; padding: 0 18px 16px; }
-.mat-edit-row input { flex: 1; height: var(--ctrl-h); padding: 0 var(--ctrl-px); font-size: var(--ctrl-fs); border: 1px solid var(--border); border-radius: var(--r); outline: none; box-sizing: border-box; }
-.mat-edit-row input:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+/* ── Materials table ───────────────────────────────────────────────────── */
+.mat-tbl-wrap { border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.mat-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.mat-table thead th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; background: var(--bg-soft); border-bottom: 1px solid var(--border); }
+.mat-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+.mat-table tbody tr:last-child { border-bottom: none; }
+.mat-table tbody tr:hover { background: var(--bg-soft); }
+.mat-table td { padding: 11px 14px; vertical-align: middle; }
+.mat-tbl-name { font-weight: 500; color: var(--text); }
+.mat-tbl-stock { white-space: nowrap; }
+.mat-tbl-stock-val { font-weight: 700; font-size: 14px; }
+.mat-tbl-unit { font-size: 11px; color: var(--text3); margin-left: 2px; }
+.mat-tbl-actions { width: 1%; white-space: nowrap; text-align: right; }
+
+.btn-icon { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: none; background: none; border-radius: var(--r); cursor: pointer; color: var(--text3); transition: color 0.13s, background 0.13s; }
+.btn-icon:hover { color: var(--text); background: var(--bg-soft); }
+.btn-icon-danger:hover { color: var(--danger); background: rgba(220,38,38,0.06); }
+
+.mat-edit-tr td { padding: 0; background: var(--bg-soft); }
+.mat-edit-inline { display: flex; align-items: center; gap: 8px; padding: 10px 14px; }
+.mat-edit-inline input { flex: 1; max-width: 200px; height: var(--ctrl-h); padding: 0 var(--ctrl-px); font-size: var(--ctrl-fs); border: 1px solid var(--border); border-radius: var(--r); outline: none; box-sizing: border-box; }
+.mat-edit-inline input:focus { border-color: var(--border-h); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+
+.mat-tbl-footer { display: flex; align-items: center; gap: 16px; padding: 10px 14px; border-top: 1px solid var(--border); background: var(--bg-soft); font-size: 12px; color: var(--text3); flex-wrap: wrap; }
+.mat-tbl-perpage { display: flex; align-items: center; gap: 6px; }
+.mat-tbl-perpage select { height: 28px; padding: 0 6px; border: 1px solid var(--border); border-radius: var(--r); font-size: 12px; background: var(--bg); color: var(--text); cursor: pointer; }
+.mat-tbl-info { flex: 1; text-align: center; }
+.mat-tbl-pages { display: flex; align-items: center; gap: 4px; }
+.btn-page { height: 28px; min-width: 28px; padding: 0 6px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); font-size: 13px; color: var(--text2); cursor: pointer; transition: background 0.13s, color 0.13s; }
+.btn-page:hover:not([disabled]) { background: var(--bg-soft); color: var(--text); }
+.btn-page[disabled] { opacity: 0.35; cursor: default; }
+.mat-page-info { font-size: 12px; color: var(--text3); padding: 0 4px; }
 
 /* ── Product cards ─────────────────────────────────────────────────────── */
 .prod-list { display: flex; flex-direction: column; gap: 8px; }
@@ -73,7 +92,6 @@
   .field.narrow { max-width: 100%; }
   :root { --ctrl-h: 44px; --ctrl-fs: 16px; --ctrl-py: 10px; --ctrl-px: 14px; }
   .btn-ghost, .btn-danger { height: 36px; font-size: 13px; }
-  .mat-card-stock { font-size: 17px; }
   .stat-val { font-size: 22px; }
   .wo-item-row .field { min-width: 100%; }
 }

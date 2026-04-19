@@ -23,36 +23,83 @@ function addMaterial() {
   });
 }
 
+let matPage = 0;
+let matPerPage = 10;
+
+function svgEdit() {
+  return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.333 2a1.886 1.886 0 0 1 2.667 2.667L5.5 13.167l-3.5.833.833-3.5L11.333 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function svgTrash() {
+  return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h12M5.333 4V2.667a.667.667 0 0 1 .667-.667h4a.667.667 0 0 1 .667.667V4M12.667 4l-.667 9.333A1.333 1.333 0 0 1 10.667 14H5.333A1.333 1.333 0 0 1 4 13.333L3.333 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
 function renderMaterials() {
   const el = document.getElementById('materials-list');
   if (!state.materials.length) { el.innerHTML = '<div class="empty">Нет материалов — добавьте первый</div>'; return; }
-  el.innerHTML = state.materials.map(m => `
-    <div class="mat-card" id="mc-${m.id}">
-      <div class="mat-card-top">
-        <div class="mat-card-info">
-          <div style="margin-bottom:4px"><span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}">${m.type==='pipe'?'Труба':'Профиль'}</span></div>
-          <div class="mat-card-name">${esc(matLabel(m))}</div>
-          <div style="margin-top:6px">
-            <span class="mat-card-stock">${m.stock.toFixed(2)}</span>
-            <span class="mat-card-unit">м</span>
-          </div>
+
+  const total = state.materials.length;
+  const totalPages = Math.ceil(total / matPerPage);
+  if (matPage >= totalPages) matPage = Math.max(0, totalPages - 1);
+  const start = matPage * matPerPage;
+  const page = state.materials.slice(start, start + matPerPage);
+
+  const perPageOptions = [5, 10, 25, 50].map(n =>
+    `<option value="${n}"${n === matPerPage ? ' selected' : ''}>${n}</option>`
+  ).join('');
+
+  const rows = page.map(m => `
+    <tr id="mr-${m.id}">
+      <td><span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}">${m.type==='pipe'?'Труба':'Профиль'}</span></td>
+      <td class="mat-tbl-name">${esc(matLabel(m))}</td>
+      <td class="mat-tbl-stock"><span class="mat-tbl-stock-val">${m.stock.toFixed(2)}</span> <span class="mat-tbl-unit">м</span></td>
+      <td class="mat-tbl-actions">
+        <button class="btn-icon" data-edit-mat="${m.id}" title="Изменить">${svgEdit()}</button>
+        <button class="btn-icon btn-icon-danger" data-del-mat="${m.id}" title="Удалить">${svgTrash()}</button>
+      </td>
+    </tr>
+    <tr class="mat-edit-tr" id="me-${m.id}" style="display:none">
+      <td colspan="4">
+        <div class="mat-edit-inline">
+          <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Введите остаток" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
+          <button class="btn btn-primary btn-sm" data-save-mat="${m.id}">Сохранить</button>
+          <button class="btn btn-ghost btn-sm" data-cancel-mat="${m.id}">Отмена</button>
         </div>
-        <div class="mat-card-actions">
-          <button class="btn btn-ghost btn-sm" data-edit-mat="${m.id}">Изменить</button>
-          <button class="btn btn-danger btn-sm" data-del-mat="${m.id}">Удалить</button>
-        </div>
-      </div>
-      <div class="mat-edit-row" id="me-${m.id}" style="display:none">
-        <input type="number" id="mei-${m.id}" value="${m.stock}" min="0" step="0.01" placeholder="Введите остаток" onkeydown="if(event.key==='Enter') askSaveMat('${m.id}')">
-        <button class="btn btn-primary btn-sm" data-save-mat="${m.id}">Сохранить</button>
-        <button class="btn btn-ghost btn-sm" data-cancel-mat="${m.id}">Отмена</button>
+      </td>
+    </tr>
+  `).join('');
+
+  const from = total ? start + 1 : 0;
+  const to = Math.min(start + matPerPage, total);
+  const paginationBtns = totalPages > 1 ? `
+    <button class="btn-page" onclick="setMatPage(0)" ${matPage===0?'disabled':''}>«</button>
+    <button class="btn-page" onclick="setMatPage(${matPage-1})" ${matPage===0?'disabled':''}>‹</button>
+    <span class="mat-page-info">${matPage+1} / ${totalPages}</span>
+    <button class="btn-page" onclick="setMatPage(${matPage+1})" ${matPage>=totalPages-1?'disabled':''}>›</button>
+    <button class="btn-page" onclick="setMatPage(${totalPages-1})" ${matPage>=totalPages-1?'disabled':''}>»</button>
+  ` : '';
+
+  el.innerHTML = `
+    <div class="mat-tbl-wrap">
+      <table class="mat-table">
+        <thead><tr>
+          <th>Тип</th><th>Название</th><th>Остаток</th><th></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="mat-tbl-footer">
+        <div class="mat-tbl-perpage">Показывать: <select onchange="setMatPerPage(+this.value)">${perPageOptions}</select></div>
+        <div class="mat-tbl-info">${from}–${to} из ${total}</div>
+        <div class="mat-tbl-pages">${paginationBtns}</div>
       </div>
     </div>
-  `).join('');
+  `;
 }
 
+function setMatPage(p) { matPage = p; renderMaterials(); }
+function setMatPerPage(n) { matPerPage = n; matPage = 0; renderMaterials(); }
+
 function startEditMat(id) {
-  document.getElementById('me-' + id).style.display = 'flex';
+  document.getElementById('me-' + id).style.display = '';
   const inp = document.getElementById('mei-' + id);
   inp.focus(); inp.select();
 }
