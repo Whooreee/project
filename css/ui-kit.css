@@ -48,5 +48,6 @@
 
 /* ── Misc feedback ─────────────────────────────────────────────────────── */
 .err { font-size: 12px; color: var(--danger); margin-top: 0; min-height: 0; width: 100%; }
+.err:empty, .ok-msg:empty { display: none; }
 .ok-msg { font-size: 12px; color: var(--success); margin-top: 0; min-height: 0; width: 100%; }
 .empty { padding: 28px 20px; text-align: center; color: var(--text3); font-size: 13px; border: 1px dashed var(--border); border-radius: var(--r-lg); }

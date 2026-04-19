@@ -1,7 +1,7 @@
 function renderWoItems() {
   const el = document.getElementById('wo-items-list');
   if (!state.products.length) {
-    el.innerHTML = '<div class="empty" style="margin-bottom:12px">Сначала создайте изделия</div>';
+    el.innerHTML = '<div class="empty">Сначала создайте изделия</div>';
     updateWoPreview();
     return;
   }
