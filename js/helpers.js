@@ -3,9 +3,9 @@ function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 
 function matBaseLabel(m) {
   if (!m) return '—';
-  return m.type === 'pipe'
-    ? `Труба Ø${m.diameter}×${m.wall}`
-    : `Профиль ${m.height}×${m.width}×${m.wall}`;
+  if (m.type === 'pipe') return `Труба Ø${m.diameter}×${m.wall}`;
+  if (m.type === 'masha') return `Маша ${m.height}×${m.width}×${m.wall}`;
+  return `Профиль ${m.height}×${m.width}×${m.wall}`;
 }
 
 function matLabel(m) {
@@ -33,6 +33,6 @@ function normalizeState(s) {
 function updateMatFields(val) {
   const t = val || cselValue('mat-type');
   document.getElementById('f-diam').style.display = t === 'pipe' ? '' : 'none';
-  document.getElementById('f-h').style.display = t === 'profile' ? '' : 'none';
-  document.getElementById('f-w').style.display = t === 'profile' ? '' : 'none';
+  document.getElementById('f-h').style.display = (t === 'profile' || t === 'masha') ? '' : 'none';
+  document.getElementById('f-w').style.display = (t === 'profile' || t === 'masha') ? '' : 'none';
 }
