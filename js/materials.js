@@ -17,7 +17,6 @@ function addMaterial() {
     if (!h || !w) { errEl.textContent = 'Укажите высоту и ширину'; return; }
     mat.height = h; mat.width = w;
   }
-
   errEl.textContent = '';
   state.materials.push(mat);
   save();
@@ -55,7 +54,7 @@ function renderMaterials() {
 
   const rows = page.map(m => `
     <tr id="mr-${m.id}">
-      <td><span class="badge ${m.type==='pipe'?'badge-pipe':m.type==='masha'?'badge-masha':'badge-profile'}">${m.type==='pipe'?'Труба':m.type==='masha'?'Маша':'Профиль'}</span></td>
+      <td><span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}">${m.type==='pipe'?'Труба':'Профиль'}</span></td>
       <td class="mat-tbl-name">
         ${esc(matBaseLabel(m))}
         ${m.surface ? `<span class="mat-chip">${esc(m.surface)}</span>` : ''}
@@ -159,7 +158,7 @@ function renderIsland(elId) {
     return `
       <div class="island-row">
         <div class="island-mat-name">
-          <span class="badge ${m.type==='pipe'?'badge-pipe':m.type==='masha'?'badge-masha':'badge-profile'}" style="font-size:9px">${m.type==='pipe'?'Т':m.type==='masha'?'М':'П'}</span>
+          <span class="badge ${m.type==='pipe'?'badge-pipe':'badge-profile'}" style="font-size:9px">${m.type==='pipe'?'Т':'П'}</span>
           ${esc(matLabel(m))}
         </div>
         <div class="island-bar-wrap">

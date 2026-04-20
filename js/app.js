@@ -57,7 +57,7 @@ async function initApp() {
 
   document.getElementById('mat-type-wrap').innerHTML = cselHtml(
     'mat-type',
-    [{v:'pipe',l:'Труба'},{v:'profile',l:'Профиль'},{v:'masha',l:'Маша'}],
+    [{v:'pipe',l:'Труба'},{v:'profile',l:'Профиль'}],
     'pipe', 'Тип'
   );
   cselOnChange('mat-type', updateMatFields);
